@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import pyqtSlot
 
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QSystemTrayIcon
@@ -12,13 +13,14 @@ from PyQt5.QtWidgets import QMenu
 # Local imports
 from .main_widget import MainWidget
 from . import data_rc
-
+from . import logger
 
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.init_tray_icon()
         self.main_widget = MainWidget()
+        self.main_widget.text_changed.connect(self.nlp)
 
     def init_tray_icon(self):
         self.restore_action = QAction("Show Main Window", self)
@@ -42,3 +44,8 @@ class Alfred(QMainWindow):
     def tray_icon_activated(self, reason):
         if(reason == QSystemTrayIcon.Trigger):
             self.main_widget.showFullScreen()
+
+    @pyqtSlot('QString')
+    def nlp(self, msg):
+        logger.info('receiving msg from user now')
+        logger.info(msg)
