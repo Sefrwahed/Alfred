@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QMenu
 
 # Local imports
 from .main_widget import MainWidget
+from .api.base_module import BaseModule
 from . import data_rc
 from . import logger
 
@@ -20,7 +21,7 @@ class Alfred(QMainWindow):
         QMainWindow.__init__(self)
         self.init_tray_icon()
         self.main_widget = MainWidget()
-        self.main_widget.text_changed.connect(self.nlp)
+        self.main_widget.text_changed.connect(self.process_text)
 
     def init_tray_icon(self):
         self.restore_action = QAction("Show Main Window", self)
@@ -46,6 +47,14 @@ class Alfred(QMainWindow):
             self.main_widget.showFullScreen()
 
     @pyqtSlot('QString')
+    def process_text(self, text):
+        # intent = nlp(text)
+        module = BaseModule({"time": "now"})
+        module_layout = module.main_layout()
+        self.main_widget.set_viewport_layout(module_layout)
+        module.start()
+
     def nlp(self, msg):
         logger.info('receiving msg from user now')
         logger.info(msg)
+        return "BaseModule"
