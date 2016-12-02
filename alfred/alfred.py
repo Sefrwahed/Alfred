@@ -1,20 +1,13 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSlot
-
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QSystemTrayIcon
-
+# PyQt imports
+from PyQt5.QtCore import QCoreApplication, pyqtSlot
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
 # Local imports
-from .main_widget import MainWidget
-from .api.base_module import BaseModule
-from . import data_rc
 from . import logger
+from .main_widget import MainWidget
+from .modules.api.base_module import BaseModule
+
 
 class Alfred(QMainWindow):
     def __init__(self):

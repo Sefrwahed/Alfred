@@ -57,31 +57,48 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLineEdit" name="lineEdit">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit { 
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QWebView" name="webView_2">
+            <property name="maximumSize">
+             <size>
+              <width>70</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="url">
+             <url>
+              <string>about:blank</string>
+             </url>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit { 
 	background-color: rgba(0, 0, 0, 0);
 	color: rgb(243, 243, 243);
-	font-size: 60px;
+	font-size: 40px;
 	padding: 8px;
-
-	border-radius: 10px;
 
 	border: 5px solid rgb(6, 184, 251);
 	border-style: none none solid none;
 }
 </string>
-          </property>
-          <property name="frame">
-           <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>ask me anything...</string>
-          </property>
-          <property name="cursorMoveStyle">
-           <enum>Qt::VisualMoveStyle</enum>
-          </property>
-         </widget>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>ask me anything...</string>
+            </property>
+            <property name="cursorMoveStyle">
+             <enum>Qt::VisualMoveStyle</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QScrollArea" name="scrollArea">
@@ -97,9 +114,20 @@
              <x>0</x>
              <y>0</y>
              <width>642</width>
-             <height>404</height>
+             <height>427</height>
             </rect>
            </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QWebView" name="webView">
+              <property name="url">
+               <url>
+                <string>about:blank</string>
+               </url>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -110,6 +138,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

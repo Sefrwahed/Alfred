@@ -1,16 +1,8 @@
 # Qt imports
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QObjectCleanupHandler
-
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObjectCleanupHandler
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QWidget
-
-import sip
 
 from .ui.widget_ui import Ui_Dialog
-from . import logger
 
 
 class MainWidget(QDialog, Ui_Dialog):
@@ -40,7 +32,8 @@ class MainWidget(QDialog, Ui_Dialog):
         layout = self.scrollAreaWidgetContents.layout()
 
         for i in range(layout.count()):
-            QObjectCleanupHandler().add(layout.itemAt(i).widget())
+            if layout.itemAt(i) != None:
+                QObjectCleanupHandler().add(layout.itemAt(i).widget())
 
         QObjectCleanupHandler().add(self.scrollAreaWidgetContents.layout())
 
