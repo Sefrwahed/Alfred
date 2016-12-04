@@ -1,0 +1,17 @@
+<table class="{{ style_class }}">
+    <thead>
+    {% for cell in header %}
+    <th class="{{ header_cells_style_class }}">
+        {{ cell }}
+    </th>
+    {% endfor %}
+    </thead>
+
+    {% for row in table %}
+    <tr>
+        {% for cell in row %}
+        <td class="{{ cell_style_class }}">{{ cell }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
