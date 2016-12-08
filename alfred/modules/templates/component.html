@@ -1,0 +1,5 @@
+<{{tagname}} {%- for k, v in attrs.items() %} {{k}}="{{v}}" {% endfor -%}>
+  {%- for c in content %}
+      {{c}}
+  {% endfor -%}
+</{{tagname}}>

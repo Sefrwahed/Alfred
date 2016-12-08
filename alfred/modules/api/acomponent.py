@@ -1,18 +1,29 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 from alfred import alfred_globals as ag
 
 
 class AComponent(ABC):
-    def __init__(self):
-        self.template_data = {}
+    def __init__(self, *args, **kwargs):
+        self.attrs = kwargs
+        self.content = list(args)
 
-    @abstractclassmethod
-    def template_name(self):
+    def set_content(self, *args):
+        self.content = list(args)
+
+    def add_to_content(self, *args):
+        self.content += args
+
+    @abstractmethod
+    def tagname(self):
         """
         Return the template name for the current class to be used while
         rendering the corresponding template
         """
 
     def __str__(self):
-        template = ag.main_components_env.get_template(self.template_name())
-        return template.render(self.template_data)
+        template = ag.main_components_env.get_template("component.html")
+        return template.render(
+            tagname=self.tagname(),
+            attrs=self.attrs,
+            content=self.content
+        )
