@@ -17,13 +17,16 @@ class Alfred(QMainWindow):
         self.main_widget.text_changed.connect(self.process_text)
 
     def init_tray_icon(self):
+        self.show_widget = QAction("Show Main Widget", self)
         self.restore_action = QAction("Show Main Window", self)
         self.quit_action = QAction("Quit", self)
 
+        self.show_widget.triggered.connect(self.show_main_widget)
         self.restore_action.triggered.connect(self.show)
         self.quit_action.triggered.connect(QCoreApplication.instance().quit)
 
         tray_icon_menu = QMenu(self)
+        tray_icon_menu.addAction(self.show_widget)
         tray_icon_menu.addAction(self.restore_action)
         tray_icon_menu.addSeparator()
         tray_icon_menu.addAction(self.quit_action)
@@ -37,7 +40,10 @@ class Alfred(QMainWindow):
 
     def tray_icon_activated(self, reason):
         if(reason == QSystemTrayIcon.Trigger):
-            self.main_widget.showFullScreen()
+            self.show_main_widget()
+
+    def show_main_widget(self):
+        self.main_widget.showFullScreen()
 
     @pyqtSlot('QString')
     def process_text(self, text):
