@@ -7,6 +7,7 @@ import alfred.logger as logger
 
 _wit = Wit(access_token=ag.WIT_TOKEN)
 
+
 class WitWrapper:
     def send(self, msg):
         self.response = _wit.message(msg)
