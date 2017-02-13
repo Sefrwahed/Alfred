@@ -26,13 +26,13 @@ class MainWidget(QDialog, Ui_Dialog):
             self.last_text = msg
 
     def remove_viewport_layout(self):
-        if self.scrollAreaWidgetContents.layout() == None:
+        if self.scrollAreaWidgetContents.layout() is None:
             return
 
         layout = self.scrollAreaWidgetContents.layout()
 
         for i in range(layout.count()):
-            if layout.itemAt(i) != None:
+            if layout.itemAt(i) is not None:
                 QObjectCleanupHandler().add(layout.itemAt(i).widget())
 
         QObjectCleanupHandler().add(self.scrollAreaWidgetContents.layout())
