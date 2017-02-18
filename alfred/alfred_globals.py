@@ -13,14 +13,16 @@ main_components_env = Environment(
 # Adding api to sys.path
 sys.path.extend([os.path.join('alfred', 'modules', 'api')])
 
-# Modules folder
 user_home_path = os.path.expanduser("~")
 user_folder_name = "." + APP_NAME.lower()
 user_folder_path = os.path.join(user_home_path, user_folder_name)
 
+# Database
+db_name = "alfred.db"
+
+# Modules folder
 if(not os.path.isdir(user_folder_path)):
     os.makedirs(user_folder_path)
-
 
 modules_folder_path = os.path.join(user_folder_path, "modules")
 sys.path.extend([modules_folder_path])
