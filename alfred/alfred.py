@@ -4,9 +4,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
 # Local imports
+import imp
+import os
+import sys
+from . import alfred_globals as ag
 from . import logger
 from .main_widget import MainWidget
-from .modules.api.base_module import BaseModule
 
 
 class Alfred(QMainWindow):
@@ -47,13 +50,27 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        # intent = nlp(text)
-        module = BaseModule({"time": "now"})
-        module_layout = module.main_layout()
-        self.main_widget.set_viewport_layout(module_layout)
-        module.start()
+        module_info = self.nlp(text)
+
+        print(sys.path)
+        mod = imp.load_source(
+            module_info[1],
+            os.path.join(ag.modules_folder_path, module_info[0])
+        )
+
+        self.curr_alfred_module = getattr(mod, module_info[2])()
+
+        self.curr_alfred_module.run()
+
+        temp = ag.main_components_env.get_template("base.html")
+        html = temp.render(componenets=self.curr_alfred_module.components)
+        self.main_widget.webView.page().setHtml(html)
 
     def nlp(self, msg):
         logger.info('receiving msg from user now')
         logger.info(msg)
-        return "BaseModule"
+        return [
+            "github.com/Sefrwahed/alfred-weather/alfred-weather.py",
+            "alfred-weather.py",
+            "AlfredWeather"
+        ]
