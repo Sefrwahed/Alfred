@@ -1,4 +1,5 @@
 # Qt imports
+import os
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
 
@@ -7,6 +8,7 @@ from .ui.window_ui import Ui_MainWindow
 import requests
 import json
 import urllib.request
+from .alfred_globals import user_folder_path
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -43,8 +45,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def download_zip(self, modules_info):
         for module in modules_info:
             url = (self.download_url.replace("<id>", str(module["id"]))) \
-                .replace("<latest_vesrsion_id>", str(1))
-            zip_path = '/home/shimaa/.alfred/modules/' + module["name"]
+                .replace("<latest_vesrsion_id>", str(module["latest_version"]["id"]))
+            zip_path = os.path.join(user_folder_path , module["name"])
             urllib.request.urlretrieve(url, zip_path)
 
 
