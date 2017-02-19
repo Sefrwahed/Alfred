@@ -10,6 +10,7 @@ import sys
 from . import alfred_globals as ag
 from . import logger
 from .main_widget import MainWidget
+from .main_window import MainWindow
 
 
 class Alfred(QMainWindow):
@@ -18,6 +19,7 @@ class Alfred(QMainWindow):
         self.init_tray_icon()
         self.main_widget = MainWidget()
         self.main_widget.text_changed.connect(self.process_text)
+        self.main_window = MainWindow()
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -25,7 +27,7 @@ class Alfred(QMainWindow):
         self.quit_action = QAction("Quit", self)
 
         self.show_widget.triggered.connect(self.show_main_widget)
-        self.restore_action.triggered.connect(self.show)
+        self.restore_action.triggered.connect(self.show_main_window)
         self.quit_action.triggered.connect(QCoreApplication.instance().quit)
 
         tray_icon_menu = QMenu(self)
@@ -47,6 +49,9 @@ class Alfred(QMainWindow):
 
     def show_main_widget(self):
         self.main_widget.showFullScreen()
+
+    def show_main_window(self):
+        self.main_window.showFullScreen()
 
     @pyqtSlot('QString')
     def process_text(self, text):
