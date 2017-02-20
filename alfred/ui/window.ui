@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>794</width>
-    <height>600</height>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,18 +57,16 @@
      <attribute name="title">
       <string>Modules Manager</string>
      </attribute>
-     <widget class="QListView" name="listView">
+     <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
         <x>-10</x>
         <y>-10</y>
-        <width>791</width>
-        <height>531</height>
+        <width>781</width>
+        <height>541</height>
        </rect>
       </property>
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
     </widget>
    </widget>

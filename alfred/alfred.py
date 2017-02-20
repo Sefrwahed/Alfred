@@ -51,7 +51,7 @@ class Alfred(QMainWindow):
         self.main_widget.showFullScreen()
 
     def show_main_window(self):
-        self.main_window.showFullScreen()
+        self.main_window.show()
 
     @pyqtSlot('QString')
     def process_text(self, text):

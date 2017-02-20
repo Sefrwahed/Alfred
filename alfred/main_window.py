@@ -4,11 +4,11 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
 
 from .ui.window_ui import Ui_MainWindow
+from .module_groupbox import ModuleGroupBox
+from .alfred_globals import modules_list_url
 
 import requests
 import json
-import urllib.request
-from .alfred_globals import user_folder_path
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -21,17 +21,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        self.url = 'https://alfredhub.herokuapp.com/alfred_modules.json'
-        self.download_url = \
-            'http://alfredhub.herokuapp.com/alfred_modules/<id>/versions/<latest_vesrsion_id>/download'
+        self.url = modules_list_url
         self.modules_info = list({})
         self.parse_json()
-        self.download_zip(self.modules_info)
+        self.list_modules()
 
-
-    @pyqtSlot()
-    def setModules(self):
-        pass
 
     def get_json(self):
         response = requests.get(self.url)
@@ -42,11 +36,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         modules_list = json.loads(response)
         self.modules_info = modules_list
 
-    def download_zip(self, modules_info):
-        for module in modules_info:
-            url = (self.download_url.replace("<id>", str(module["id"]))) \
-                .replace("<latest_vesrsion_id>", str(module["latest_version"]["id"]))
-            zip_path = os.path.join(user_folder_path , module["name"])
-            urllib.request.urlretrieve(url, zip_path)
+    def list_modules(self):
+        for module in self.modules_info:
+            item = ModuleGroupBox(module)
+            self.verticalLayout.addWidget(item)
+
+
+
+
 
 
