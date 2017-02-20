@@ -11,12 +11,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         GroupBox.setObjectName("GroupBox")
-        GroupBox.resize(730, 104)
+        GroupBox.resize(634, 104)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(GroupBox.sizePolicy().hasHeightForWidth())
         GroupBox.setSizePolicy(sizePolicy)
+        GroupBox.setStyleSheet("QGroupBox{\n"
+"    border:none\n"
+"\n"
+"}")
         GroupBox.setTitle("")
         self.pushButton = QtWidgets.QPushButton(GroupBox)
         self.pushButton.setGeometry(QtCore.QRect(540, 40, 91, 27))

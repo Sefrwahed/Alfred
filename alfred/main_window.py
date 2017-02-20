@@ -18,7 +18,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        # self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self.url = modules_list_url
@@ -39,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def list_modules(self):
         for module in self.modules_info:
             item = ModuleGroupBox(module)
-            self.verticalLayout.addWidget(item)
+            self.verticalLayout_inner.addWidget(item)
 
 
 
