@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(790, 430)
+        MainWindow.resize(806, 564)
         MainWindow.setStyleSheet("QFrame{ background-color: rgba(33,34,34,.96); }")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("QFrame{ background-color: rgba(33,34,34,.96); }")
@@ -33,10 +33,21 @@ class Ui_MainWindow(object):
         self.modulesManager_tab = QtWidgets.QWidget()
         self.modulesManager_tab.setObjectName("modulesManager_tab")
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.modulesManager_tab)
-        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(-1, 0, 771, 381))
+        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(-1, 0, 771, 501))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.verticalLayout_inner = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_inner.setObjectName("verticalLayout_inner")
+        self.labelError = QtWidgets.QLabel(self.verticalLayoutWidget_2)
+        self.labelError.setEnabled(True)
+        self.labelError.setStyleSheet("QLabel{\n"
+"    color:rgb(243,243,243)\n"
+"\n"
+"}")
+        self.labelError.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.labelError.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.labelError.setScaledContents(False)
+        self.labelError.setObjectName("labelError")
+        self.verticalLayout_inner.addWidget(self.labelError, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.tabWidget.addTab(self.modulesManager_tab, "")
         self.verticalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -51,5 +62,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.labelError.setText(_translate("MainWindow", "Error"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.modulesManager_tab), _translate("MainWindow", "Modules Manager"))
 

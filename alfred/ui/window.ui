@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>790</width>
-    <height>430</height>
+    <width>806</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,10 +66,36 @@
            <x>-1</x>
            <y>0</y>
            <width>771</width>
-           <height>381</height>
+           <height>501</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_inner"/>
+         <layout class="QVBoxLayout" name="verticalLayout_inner">
+          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+           <widget class="QLabel" name="labelError">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	color:rgb(243,243,243)
+
+}</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="text">
+             <string>Error</string>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </widget>

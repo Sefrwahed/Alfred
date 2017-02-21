@@ -12,34 +12,62 @@ import json
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    text_changed = pyqtSignal('QString')
 
     def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
-
         # self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self.url = modules_list_url
         self.modules_info = list({})
-        self.parse_json()
-        self.list_modules()
 
+        self.setupMainWindow()
 
     def get_json(self):
-        response = requests.get(self.url)
-        return response.text
+        try:
+            response = requests.get(self.url)
+            return response.text
+        except requests.exceptions.ConnectionError:
+            return 0
+
+    # def get_json(self):
+    #     try:
+    #         response = requests.get(self.url)
+    #     except requests.exceptions.ConnectionError:
+    #         pass
+    #
+    #     response = [{"id": 4,"name": "alfred-weather",
+    #                  "description": "Fetch and see weather forecast on Alfred assistant",
+    #                  "license": "mit","latest_version":{"number":"0.0.1","id":1}}, {
+    #         "id": 6,"name": "alfred-app-exec","description": "Execute programs",
+    #         "license": "mit","latest_version":{"number":"1.0.0","id":1}}]
+    #     return response
 
     def parse_json(self):
-        response = self.get_json()
-        modules_list = json.loads(response)
+        modules_list = json.loads(self.response)
         self.modules_info = modules_list
 
     def list_modules(self):
         for module in self.modules_info:
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item)
+        self.labelError.hide()
+
+    def handleConnectionError(self):
+        self.labelError.show()
+        self.labelError.setText("No Internet Connection")
+        #atalla3 notification mn Alfred nafso
+
+    def setupMainWindow(self):
+        self.response = self.get_json()
+        if (self.response != 0):
+            self.parse_json()
+            self.list_modules()
+        else:
+            self.handleConnectionError()
+
+
 
 
 
