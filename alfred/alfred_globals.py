@@ -29,3 +29,7 @@ sys.path.extend([modules_folder_path])
 
 if(not os.path.isdir(modules_folder_path)):
     os.makedirs(modules_folder_path)
+
+#Modules server
+modules_list_url =  'https://alfredhub.herokuapp.com/alfred_modules.json'
+modules_download_url = 'http://alfredhub.herokuapp.com/alfred_modules/<id>/versions/<latest_vesrsion_id>/download'
