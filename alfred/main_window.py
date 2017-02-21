@@ -22,8 +22,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.url = modules_list_url
         self.modules_info = list({})
 
-        self.setupMainWindow()
-
     def get_json(self):
         try:
             response = requests.get(self.url)
@@ -57,7 +55,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def handleConnectionError(self):
         self.labelError.show()
         self.labelError.setText("No Internet Connection")
-        #atalla3 notification mn Alfred nafso
 
     def setupMainWindow(self):
         self.response = self.get_json()
@@ -67,6 +64,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.handleConnectionError()
 
+    #overrides the show function :D
+    def showEvent(self, QShowEvent):
+        self.setupMainWindow()
 
 
 
