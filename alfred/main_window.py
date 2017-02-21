@@ -2,6 +2,7 @@
 import os
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QVBoxLayout
 
 from .ui.window_ui import Ui_MainWindow
 from .module_groupbox import ModuleGroupBox
@@ -21,6 +22,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.url = modules_list_url
         self.modules_info = list({})
+
+        self.pushButtonRetry.clicked.connect(self.setupMainWindow)
 
     def get_json(self):
         try:
@@ -47,13 +50,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modules_info = modules_list
 
     def list_modules(self):
+        self.verticalLayout_inner = QVBoxLayout()
+
         for module in self.modules_info:
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item)
-        self.labelError.hide()
+            self.modulesManager_tab.setLayout(self.verticalLayout_inner)
+
+        self.groupBoxError.hide()
 
     def handleConnectionError(self):
-        self.labelError.show()
+        self.groupBoxError.show()
         self.labelError.setText("No Internet Connection")
 
     def setupMainWindow(self):
