@@ -1,19 +1,18 @@
-# Qt imports
 import os
 import urllib.request
 
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+# Qt imports
 from PyQt5.QtWidgets import QGroupBox
 
 from .ui.moduleGroupBox_ui import Ui_GroupBox
 from .alfred_globals import user_folder_path
 from .alfred_globals import modules_download_url
-
+from .modules.install import install
 
 
 class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
-    def __init__(self,module_info):
+    def __init__(self, module_info):
         QGroupBox.__init__(self)
         self.setupUi(self)
 
@@ -23,16 +22,15 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.download_url = modules_download_url
         self.pushButton.clicked.connect(self.download_zip)
 
-
     # @pyqtSlot()
     def setData(self):
         self.labelName.setText(self.module["name"])
         self.labelDesc.setText(self.module["description"])
         self.labelLicense.setText(self.module["license"])
-        latestVersion= self.module["latest_version"]
+        latestVersion = self.module["latest_version"]
         self.labelVersion.setText(latestVersion["number"])
 
-    def enableButton(self,enable):
+    def enableButton(self, enable):
         self.pushButton.enabled = enable
 
     def download_zip(self):
@@ -41,13 +39,10 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
         module = self.module
         url = (self.download_url.replace("<id>", str(module["id"]))) \
-                .replace("<latest_vesrsion_id>", str(module["latest_version"]["id"]))
+         .replace("<latest_vesrsion_id>", str(module["latest_version"]["id"]))
         zip_path = os.path.join(user_folder_path, module["name"])
         urllib.request.urlretrieve(url, zip_path)
 
+        install(module, zip_path)
+
         self.pushButton.setText("installed")
-
-
-
-
-
