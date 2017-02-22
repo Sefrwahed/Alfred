@@ -4,6 +4,7 @@ import zipfile
 
 from alfred import alfred_globals as ag
 from alfred.modules.module_info import add_module_info
+from alfred.nlp import classifier
 
 
 def install_cached_modules():
@@ -44,3 +45,4 @@ def install(mod_data, module_zip_path):
     os.remove(module_zip_path)
 
     add_module_info(name, source, username, version)
+    classifier.train()
