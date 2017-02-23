@@ -36,8 +36,9 @@ def train():
             sentences.extend(m_sent)
             targets.extend(len(m_sent) * [mi.id])
 
-    classifier.fit(sentences, targets)
-    pickle.dump(classifier, open(clf_path, "wb"))
+    if len(sentences) != 0:
+        classifier.fit(sentences, targets)
+        pickle.dump(classifier, open(clf_path, "wb"))
 
 
 def predict(sent):
