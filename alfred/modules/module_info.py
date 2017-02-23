@@ -22,6 +22,21 @@ class ModuleInfo(Base):
         self.user = user
         self.version = version
 
+    def root(self):
+        return os.path.join(ag.modules_folder_path,
+                            self.source,
+                            self.user,
+                            self.name)
+
+    def training_sentences_json_file_path(self):
+        return os.path.join(self.root(),
+                            "training_sentences.json")
+
+    def entry_point(self):
+        return self.name + ".py"
+
+    def class_name(self):
+        return "".join(w.title() for w in self.name.split("-"))
 
 SessionMaker = None
 
@@ -40,6 +55,13 @@ def make_session():
     if SessionMaker is None:
         init_db()
     return SessionMaker()
+
+
+def get_module_by_id(id):
+    session = make_session()
+    info = session.query(ModuleInfo).get(int(id))
+    session.close()
+    return info
 
 
 def add_module_info(name, source, user, version):

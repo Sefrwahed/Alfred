@@ -1,6 +1,5 @@
 # Qt imports
-import os
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QVBoxLayout
 
@@ -32,19 +31,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except requests.exceptions.ConnectionError:
             return 0
 
-    # def get_json(self):
-    #     try:
-    #         response = requests.get(self.url)
-    #     except requests.exceptions.ConnectionError:
-    #         pass
-    #
-    #     response = [{"id": 4,"name": "alfred-weather",
-    #                  "description": "Fetch and see weather forecast on Alfred assistant",
-    #                  "license": "mit","latest_version":{"number":"0.0.1","id":1}}, {
-    #         "id": 6,"name": "alfred-app-exec","description": "Execute programs",
-    #         "license": "mit","latest_version":{"number":"1.0.0","id":1}}]
-    #     return response
-
     def parse_json(self):
         modules_list = json.loads(self.response)
         self.modules_info = modules_list
@@ -71,13 +57,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.handleConnectionError()
 
-    #overrides the show function :D
     def showEvent(self, QShowEvent):
         self.setupMainWindow()
-
-
-
-
-
-
-

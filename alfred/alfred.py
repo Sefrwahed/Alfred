@@ -6,11 +6,11 @@ from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 # Local imports
 import imp
 import os
-import sys
 from . import alfred_globals as ag
-from . import logger
 from .main_widget import MainWidget
 from .main_window import MainWindow
+from .nlp import classifier
+from .modules.module_info import get_module_by_id
 
 
 class Alfred(QMainWindow):
@@ -55,27 +55,21 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        module_info = self.nlp(text)
+        module_info = get_module_by_id(classifier.predict(text))
+        if not module_info:
+            return
 
-        print(sys.path)
         mod = imp.load_source(
-            module_info[1],
-            os.path.join(ag.modules_folder_path, module_info[0])
+            module_info.entry_point(),
+            os.path.join(ag.modules_folder_path,
+                         module_info.root(),
+                         module_info.entry_point())
         )
 
-        self.curr_alfred_module = getattr(mod, module_info[2])()
+        self.curr_alfred_module = getattr(mod, module_info.class_name())()
 
         self.curr_alfred_module.run()
 
         temp = ag.main_components_env.get_template("base.html")
         html = temp.render(componenets=self.curr_alfred_module.components)
         self.main_widget.webView.page().setHtml(html)
-
-    def nlp(self, msg):
-        logger.info('receiving msg from user now')
-        logger.info(msg)
-        return [
-            "github.com/Sefrwahed/alfred-weather/alfred-weather.py",
-            "alfred-weather.py",
-            "AlfredWeather"
-        ]

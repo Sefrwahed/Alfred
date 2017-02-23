@@ -20,6 +20,9 @@ user_folder_path = os.path.join(user_home_path, user_folder_name)
 # Database
 db_name = "alfred.db"
 
+# Classifier
+clf_file = "classifier.pkl"
+
 # Modules folder
 if(not os.path.isdir(user_folder_path)):
     os.makedirs(user_folder_path)
