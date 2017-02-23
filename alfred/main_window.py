@@ -24,6 +24,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.pushButtonRetry.clicked.connect(self.setupMainWindow)
 
+
+
     def get_json(self):
         try:
             response = requests.get(self.url)
@@ -31,8 +33,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except requests.exceptions.ConnectionError:
             return 0
 
+    # def get_json(self):
+    #     try:
+    #         response = requests.get(self.url)
+    #     except requests.exceptions.ConnectionError:
+    #         pass
+    #
+    #     self.response = [{"id": 4,"name": "alfred-weather",
+    #                  "description": "Fetch and see weather forecast on Alfred assistant",
+    #                  "license": "mit","latest_version":{"number":"0.0.1","id":1}}, {
+    #         "id": 6,"name": "alfred-app-exec","description": "Execute programs",
+    #         "license": "mit","latest_version":{"number":"1.0.0","id":1}}]
+
+
     def parse_json(self):
-        modules_list = json.loads(self.response)
+        #modules_list = json.loads(self.response)
+        self.get_json()
+        modules_list = self.response
         self.modules_info = modules_list
 
     def list_modules(self):
@@ -40,8 +57,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         for module in self.modules_info:
             item = ModuleGroupBox(module)
-            self.verticalLayout_inner.addWidget(item)
-            self.modulesManager_tab.setLayout(self.verticalLayout_inner)
+            self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
+
+        self.modulesManager_tab.setLayout(self.verticalLayout_inner)
 
         self.groupBoxError.hide()
 

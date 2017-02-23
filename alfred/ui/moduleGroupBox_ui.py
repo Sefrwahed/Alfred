@@ -11,8 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GroupBox(object):
     def setupUi(self, GroupBox):
         GroupBox.setObjectName("GroupBox")
-        GroupBox.resize(634, 104)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        GroupBox.resize(635, 131)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(GroupBox.sizePolicy().hasHeightForWidth())
@@ -22,69 +22,70 @@ class Ui_GroupBox(object):
 "\n"
 "}")
         GroupBox.setTitle("")
-        self.pushButton = QtWidgets.QPushButton(GroupBox)
-        self.pushButton.setGeometry(QtCore.QRect(540, 40, 91, 27))
-        self.pushButton.setObjectName("pushButton")
-        self.verticalLayoutWidget = QtWidgets.QWidget(GroupBox)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 521, 89))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.labelName = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(GroupBox)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.labelName_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelName.sizePolicy().hasHeightForWidth())
-        self.labelName.setSizePolicy(sizePolicy)
+        sizePolicy.setHeightForWidth(self.labelName_2.sizePolicy().hasHeightForWidth())
+        self.labelName_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("MathJax_Caligraphic")
         font.setPointSize(16)
-        self.labelName.setFont(font)
-        self.labelName.setStyleSheet("QLabel{\n"
+        self.labelName_2.setFont(font)
+        self.labelName_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
-        self.labelName.setObjectName("labelName")
-        self.verticalLayout.addWidget(self.labelName)
-        self.labelDesc = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.labelName_2.setObjectName("labelName_2")
+        self.verticalLayout_2.addWidget(self.labelName_2)
+        self.labelDesc_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelDesc.sizePolicy().hasHeightForWidth())
-        self.labelDesc.setSizePolicy(sizePolicy)
-        self.labelDesc.setStyleSheet("QLabel{\n"
+        sizePolicy.setHeightForWidth(self.labelDesc_2.sizePolicy().hasHeightForWidth())
+        self.labelDesc_2.setSizePolicy(sizePolicy)
+        self.labelDesc_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
-        self.labelDesc.setObjectName("labelDesc")
-        self.verticalLayout.addWidget(self.labelDesc)
-        self.labelVersion = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.labelDesc_2.setObjectName("labelDesc_2")
+        self.verticalLayout_2.addWidget(self.labelDesc_2)
+        self.labelVersion_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelVersion.sizePolicy().hasHeightForWidth())
-        self.labelVersion.setSizePolicy(sizePolicy)
-        self.labelVersion.setStyleSheet("QLabel{\n"
+        sizePolicy.setHeightForWidth(self.labelVersion_2.sizePolicy().hasHeightForWidth())
+        self.labelVersion_2.setSizePolicy(sizePolicy)
+        self.labelVersion_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
-        self.labelVersion.setObjectName("labelVersion")
-        self.verticalLayout.addWidget(self.labelVersion)
-        self.labelLicense = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.labelVersion_2.setObjectName("labelVersion_2")
+        self.verticalLayout_2.addWidget(self.labelVersion_2)
+        self.labelLicense_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelLicense.sizePolicy().hasHeightForWidth())
-        self.labelLicense.setSizePolicy(sizePolicy)
-        self.labelLicense.setStyleSheet("QLabel{\n"
+        sizePolicy.setHeightForWidth(self.labelLicense_2.sizePolicy().hasHeightForWidth())
+        self.labelLicense_2.setSizePolicy(sizePolicy)
+        self.labelLicense_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
-        self.labelLicense.setObjectName("labelLicense")
-        self.verticalLayout.addWidget(self.labelLicense)
+        self.labelLicense_2.setObjectName("labelLicense_2")
+        self.verticalLayout_2.addWidget(self.labelLicense_2)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+        self.pushButton = QtWidgets.QPushButton(GroupBox)
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout.addWidget(self.pushButton)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.pushButton.raise_()
-        self.verticalLayoutWidget.raise_()
-        self.labelLicense.raise_()
 
         self.retranslateUi(GroupBox)
         QtCore.QMetaObject.connectSlotsByName(GroupBox)
@@ -92,9 +93,9 @@ class Ui_GroupBox(object):
     def retranslateUi(self, GroupBox):
         _translate = QtCore.QCoreApplication.translate
         GroupBox.setWindowTitle(_translate("GroupBox", "GroupBox"))
+        self.labelName_2.setText(_translate("GroupBox", "TextLabel"))
+        self.labelDesc_2.setText(_translate("GroupBox", "TextLabel"))
+        self.labelVersion_2.setText(_translate("GroupBox", "TextLabel"))
+        self.labelLicense_2.setText(_translate("GroupBox", "TextLabel"))
         self.pushButton.setText(_translate("GroupBox", "Install"))
-        self.labelName.setText(_translate("GroupBox", "TextLabel"))
-        self.labelDesc.setText(_translate("GroupBox", "TextLabel"))
-        self.labelVersion.setText(_translate("GroupBox", "TextLabel"))
-        self.labelLicense.setText(_translate("GroupBox", "TextLabel"))
 

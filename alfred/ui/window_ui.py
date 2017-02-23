@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(806, 564)
+        MainWindow.resize(398, 564)
         MainWindow.setStyleSheet("QFrame{ background-color: rgba(33,34,34,.96); }")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("QFrame{ background-color: rgba(33,34,34,.96); }")
@@ -27,12 +27,12 @@ class Ui_MainWindow(object):
         self.tabWidget.setElideMode(QtCore.Qt.ElideRight)
         self.tabWidget.setTabsClosable(False)
         self.tabWidget.setMovable(False)
-        self.tabWidget.setProperty("tabBarAutoHide", False)
+        self.tabWidget.setTabBarAutoHide(False)
         self.tabWidget.setObjectName("tabWidget")
         self.modulesManager_tab = QtWidgets.QWidget()
         self.modulesManager_tab.setObjectName("modulesManager_tab")
         self.groupBoxError = QtWidgets.QGroupBox(self.modulesManager_tab)
-        self.groupBoxError.setGeometry(QtCore.QRect(230, 220, 291, 51))
+        self.groupBoxError.setGeometry(QtCore.QRect(50, 210, 291, 51))
         self.groupBoxError.setStyleSheet("QGroupBox{\n"
 "    border:none\n"
 "}")
@@ -83,5 +83,3 @@ class Ui_MainWindow(object):
         self.labelError.setText(_translate("MainWindow", "Error"))
         self.pushButtonRetry.setText(_translate("MainWindow", "Retry"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.modulesManager_tab), _translate("MainWindow", "Modules Manager"))
-
-

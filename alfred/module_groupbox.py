@@ -1,4 +1,5 @@
 import os
+import string
 import urllib.request
 
 # Qt imports
@@ -24,11 +25,15 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
     # @pyqtSlot()
     def setData(self):
-        self.labelName.setText(self.module["name"])
-        self.labelDesc.setText(self.module["description"])
-        self.labelLicense.setText(self.module["license"])
-        latestVersion = self.module["latest_version"]
-        self.labelVersion.setText(latestVersion["number"])
+
+        name = self.module["name"]
+        name = name.replace('-',' ')
+        name = string.capwords(name)
+        self.labelName_2.setText(name)
+        self.labelDesc_2.setText(self.module["description"])
+        self.labelLicense_2.setText(self.module["license"])
+        latestVersion= self.module["latest_version"]
+        self.labelVersion_2.setText(latestVersion["number"])
 
     def enableButton(self, enable):
         self.pushButton.enabled = enable

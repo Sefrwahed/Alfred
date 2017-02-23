@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
+    <width>398</width>
     <height>564</height>
    </rect>
   </property>
@@ -46,7 +46,7 @@
         <property name="movable">
          <bool>false</bool>
         </property>
-        <property name="tabBarAutoHide" stdset="0">
+        <property name="tabBarAutoHide">
          <bool>false</bool>
         </property>
         <widget class="QWidget" name="modulesManager_tab">
@@ -56,8 +56,8 @@
          <widget class="QGroupBox" name="groupBoxError">
           <property name="geometry">
            <rect>
-            <x>230</x>
-            <y>220</y>
+            <x>50</x>
+            <y>210</y>
             <width>291</width>
             <height>51</height>
            </rect>
