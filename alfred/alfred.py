@@ -6,9 +6,7 @@ from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 # Local imports
 import imp
 import os
-import sys
 from . import alfred_globals as ag
-from . import logger
 from .main_widget import MainWidget
 from .main_window import MainWindow
 from .nlp import classifier

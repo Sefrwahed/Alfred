@@ -1,6 +1,5 @@
 # Qt imports
-import os
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QVBoxLayout
 
@@ -58,6 +57,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.handleConnectionError()
 
-    #overrides the show function :D
     def showEvent(self, QShowEvent):
         self.setupMainWindow()
