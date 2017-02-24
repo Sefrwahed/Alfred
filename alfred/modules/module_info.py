@@ -1,14 +1,11 @@
 import os
-from sqlalchemy import Column, Integer, String, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy import Column, Integer, String
 
 from alfred import alfred_globals as ag
+from alfred.database import DBModelBase, make_session
 
-Base = declarative_base()
 
-
-class ModuleInfo(Base):
+class ModuleInfo(DBModelBase):
     __tablename__ = 'module_info'
     id = Column(Integer, primary_key=True)
     name = Column(String(256), nullable=False)
@@ -37,24 +34,6 @@ class ModuleInfo(Base):
 
     def class_name(self):
         return "".join(w.title() for w in self.name.split("-"))
-
-SessionMaker = None
-
-
-def init_db():
-    filepath = os.path.join(ag.user_folder_path, ag.db_name)
-    engine = create_engine('sqlite:///{}'.format(filepath))
-    Base.metadata.bind = engine
-    if not os.path.isfile(filepath):
-        Base.metadata.create_all()
-    global SessionMaker
-    SessionMaker = sessionmaker(engine)
-
-
-def make_session():
-    if SessionMaker is None:
-        init_db()
-    return SessionMaker()
 
 
 def get_module_by_id(id):
