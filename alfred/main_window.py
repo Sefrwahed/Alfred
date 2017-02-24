@@ -47,9 +47,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def parse_json(self):
-        #modules_list = json.loads(self.response)
-        self.get_json()
-        modules_list = self.response
+        modules_list = json.loads(self.response)
+        #self.get_json()
+        #modules_list = self.response
         self.modules_info = modules_list
 
     def list_modules(self):
