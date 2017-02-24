@@ -66,7 +66,7 @@ class Alfred(QMainWindow):
                          module_info.entry_point())
         )
 
-        self.curr_alfred_module = getattr(mod, module_info.class_name())()
+        self.curr_alfred_module = getattr(mod, module_info.class_name())(module_info)
 
         self.curr_alfred_module.run()
 

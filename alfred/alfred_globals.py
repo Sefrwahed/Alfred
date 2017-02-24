@@ -2,6 +2,8 @@ from jinja2 import Environment, FileSystemLoader
 import os
 import sys
 
+from alfred.settings import Settings
+
 APP_NAME = "Alfred"
 WIT_TOKEN = "GMCAOZ4HFZ3Q5K7FNOFIQSR6VCM6NA47"
 
@@ -36,3 +38,6 @@ if(not os.path.isdir(modules_folder_path)):
 #Modules server
 modules_list_url =  'https://alfredhub.herokuapp.com/alfred_modules.json'
 modules_download_url = 'http://alfredhub.herokuapp.com/alfred_modules/<id>/versions/<latest_vesrsion_id>/download'
+
+settings_path = os.path.join(user_folder_path, 'settings.json')
+global_settings = Settings(settings_path)
