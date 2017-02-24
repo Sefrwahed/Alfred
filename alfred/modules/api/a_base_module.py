@@ -2,12 +2,15 @@ import json
 import os
 from abc import ABC, abstractmethod
 
+from alfred.settings import Settings
+
 
 class ABaseModule(ABC):
     def __init__(self, module_info, entities=''):
         self.components = []
         self.module_info = module_info
-        self.settings = self.load_settings()
+        self.settings = Settings(os.path.join(
+            self.module_info.root(), 'settings.json'))
 
     def run(self):
         self.callback()
@@ -24,18 +27,3 @@ class ABaseModule(ABC):
     def construct_view(self):
         pass
 
-    def load_settings(self):
-        settings_path = os.path.join(self.module_info.root(), 'settings.json')
-        if os.path.exists(settings_path) and os.path.isfile(settings_path):
-            with open(settings_path, 'r') as f:
-                settings = json.loads(f.read())
-        else:
-            settings = {}
-            self.save_settings()
-
-        return settings
-
-    def save_settings(self):
-        settings_path = os.path.join(self.module_info.root(), 'settings.json')
-        with open(settings_path, 'w') as f:
-            f.writelines(json.dumps(self.settings))
