@@ -19,12 +19,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
+        self.response = None
+        self.verticalLayout_inner = None
         self.url = modules_list_url
         self.modules_info = list({})
 
-        self.pushButtonRetry.clicked.connect(self.setupMainWindow)
-
-
+        self.pushButtonRetry.clicked.connect(self.setup_main_window)
 
     def get_json(self):
         try:
@@ -32,7 +32,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return response.text
         except requests.exceptions.ConnectionError:
             return 0
-
     # def get_json(self):
     #     try:
     #         response = requests.get(self.url)
@@ -45,11 +44,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     #         "id": 6,"name": "alfred-app-exec","description": "Execute programs",
     #         "license": "mit","latest_version":{"number":"1.0.0","id":1}}]
 
-
     def parse_json(self):
         modules_list = json.loads(self.response)
-        #self.get_json()
-        #modules_list = self.response
+        # self.get_json()
+        # modules_list = self.response
         self.modules_info = modules_list
 
     def list_modules(self):
@@ -63,17 +61,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.groupBoxError.hide()
 
-    def handleConnectionError(self):
+    def handle_connection_error(self):
         self.groupBoxError.show()
         self.labelError.setText("No Internet Connection")
 
-    def setupMainWindow(self):
+    def setup_main_window(self):
         self.response = self.get_json()
-        if (self.response != 0):
+        if self.response != 0:
             self.parse_json()
             self.list_modules()
         else:
-            self.handleConnectionError()
+            self.handle_connection_error()
 
     def showEvent(self, QShowEvent):
-        self.setupMainWindow()
+        self.setup_main_window()
