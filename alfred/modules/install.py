@@ -31,8 +31,6 @@ def install(mod_data, module_zip_path):
                            # source, username, '.tmp')
 
     for dir in [install_dir]:
-        print(dir)
-        print("\n")
         if os.path.exists(dir):
             print("rem")
             shutil.rmtree(dir)
@@ -71,5 +69,6 @@ def uninstall(mod_data):
 
 
 def update(mod_data):
-    # TODO
+    uninstall(mod_data)
+    install(mod_data)
     pass

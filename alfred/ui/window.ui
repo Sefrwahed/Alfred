@@ -148,8 +148,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="../resources/ui_resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

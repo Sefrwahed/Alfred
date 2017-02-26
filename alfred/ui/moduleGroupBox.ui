@@ -119,6 +119,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+	background-color: rgb(255, 255, 255);
+	color: rgb(39, 255, 165);
+}</string>
+       </property>
        <property name="text">
         <string>Install</string>
        </property>
@@ -127,8 +133,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>gridLayoutWidget</zorder>
-  <zorder>pushButton</zorder>
  </widget>
  <resources/>
  <connections/>
