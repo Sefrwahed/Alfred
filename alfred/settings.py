@@ -23,5 +23,9 @@ class Settings():
             self.settings_dict = json.loads(f.read())
 
     def commit(self):
+        dir = os.path.abspath(os.path.dirname(self.settings_path))
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+
         with open(self.settings_path, 'w') as f:
             f.writelines(json.dumps(self.settings_dict))

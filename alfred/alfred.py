@@ -56,15 +56,12 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         module_info = get_module_by_id(classifier.predict(text))
+
         if not module_info:
             return
 
-        mod = imp.load_source(
-            module_info.entry_point(),
-            os.path.join(ag.modules_folder_path,
-                         module_info.root(),
-                         module_info.entry_point())
-        )
+        mod = __import__(f'{module_info.name}.{module_info.name}',
+                         fromlist=module_info.name)
 
         self.curr_alfred_module = getattr(mod, module_info.class_name())(module_info)
 

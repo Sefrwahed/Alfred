@@ -20,10 +20,17 @@ class ModuleInfo(DBModelBase):
         self.version = version
 
     def root(self):
-        return os.path.join(ag.modules_folder_path,
+        path = os.path.join(ag.modules_folder_path,
                             self.source,
                             self.user,
                             self.name)
+        # TODO get path from database
+        path = os.path.join(
+            '/home/n1amr/.pyenv/versions/3.6.0/envs/env_alfred/lib/python3.6/site-packages',
+            self.name
+
+        )
+        return path
 
     def training_sentences_json_file_path(self):
         return os.path.join(self.root(),
@@ -33,7 +40,10 @@ class ModuleInfo(DBModelBase):
         return self.name + ".py"
 
     def class_name(self):
-        return "".join(w.title() for w in self.name.split("-"))
+        s = self.name
+        s = "".join(w.title() for w in s.split("-"))
+        s = "".join(w.title() for w in s.split("_"))
+        return s
 
 
 def get_module_by_id(id):

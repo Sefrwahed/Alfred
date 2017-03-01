@@ -10,7 +10,6 @@ from .alfred_globals import user_folder_path
 from .alfred_globals import modules_download_url
 from .modules.install import install
 
-
 class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
     def __init__(self, module_info):
@@ -21,7 +20,16 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.setData()
 
         self.download_url = modules_download_url
-        self.pushButton.clicked.connect(self.download_zip)
+        self.pushButton.clicked.connect(self.install_module)
+
+    def install_module(self):
+        self.pushButton.setText("installing..")
+        self.pushButton.enabled = False
+
+        module = self.module
+        install(module, None)
+
+        self.pushButton.setText("installed")
 
     # @pyqtSlot()
     def setData(self):

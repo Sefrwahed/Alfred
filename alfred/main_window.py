@@ -29,7 +29,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def get_json(self):
         try:
             response = requests.get(self.url)
-            return response.text
+            # TODO
+            return response.text.replace('-', '_')
         except requests.exceptions.ConnectionError:
             return 0
 

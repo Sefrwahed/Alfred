@@ -1,6 +1,7 @@
 import os
-import shutil
 import zipfile
+
+import pip
 
 from alfred import alfred_globals as ag
 from alfred.modules.module_info import add_module_info
@@ -17,32 +18,14 @@ def install_cached_modules():
 
 
 def install(mod_data, module_zip_path):
-    # TODO fetch missing module info
+    name = mod_data['name']
+    version = mod_data['latest_version']['number']
     username = 'Sefrwahed'
     source = 'github.com'
 
-    name = mod_data['name']
-    version = mod_data['latest_version']['number']
-
-    install_dir = os.path.join(ag.user_folder_path, 'modules',
-                               source, username, name)
-    # tmp_dir = os.path.join(ag.user_folder_path, 'modules',
-                           # source, username, '.tmp')
-
-    for dir in [install_dir]:
-        if os.path.exists(dir):
-            shutil.rmtree(dir)
-        os.makedirs(dir)
-
-    module_zip = zipfile.ZipFile(module_zip_path, 'r')
-    module_zip.extractall(install_dir)
-    module_zip.close()
-
-    # Move .../<usernmae>/.tmp to .../<usernmae>/<name> & clean .tmp directory
-    # os.rename(module_root_path, install_dir)
-    # os.removedirs(tmp_dir)
-
-    os.remove(module_zip_path)
-
+    path = f'git+git://github.com/n1amr/{mod_data["name"]}.git@master'
+    pip.main(['install', path])
+    # TODO add installation path to module_info in database
     add_module_info(name, source, username, version)
+
     classifier.train()
