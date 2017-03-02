@@ -4,6 +4,7 @@ import zipfile
 
 from alfred import alfred_globals as ag
 from alfred.modules.module_info import add_module_info
+from alfred.modules.module_info import delete_module_info
 from alfred.nlp import classifier
 
 
@@ -31,6 +32,7 @@ def install(mod_data, module_zip_path):
 
     for dir in [install_dir]:
         if os.path.exists(dir):
+            print("rem")
             shutil.rmtree(dir)
         os.makedirs(dir)
 
@@ -46,3 +48,27 @@ def install(mod_data, module_zip_path):
 
     add_module_info(name, source, username, version)
     classifier.train()
+
+
+def uninstall(mod_data):
+
+    username = 'Sefrwahed'
+    source = 'github.com'
+    name = mod_data['name']
+
+    module_folder_path = os.path.join(ag.modules_folder_path,
+                                      source, username, name)
+
+    try:
+        shutil.rmtree(module_folder_path)
+    except Exception as ex:
+        print(ex)
+
+    delete_module_info(mod_data["id"])
+    classifier.train()
+
+
+def update(mod_data):
+    uninstall(mod_data)
+    install(mod_data)
+    pass
