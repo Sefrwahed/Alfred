@@ -1,6 +1,7 @@
 import os
 import string
 import urllib.request
+from enum import Enum
 
 
 # Qt imports
@@ -13,11 +14,14 @@ from .modules.install import install
 from .modules.install import uninstall
 from .modules.install import update
 from .modules.module_info import get_module_by_id
+import alfred.logger as logger
 
-class ButtonState:
+
+class ButtonState(Enum):
     UNINSTALL = "Uninstall"
     INSTALL = "Install"
     UPDATE = "Update"
+
 
 class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
@@ -25,6 +29,7 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         QGroupBox.__init__(self)
         self.setupUi(self)
         self.buttonState = None
+        self.name = None
 
         self.module = module_info
         self.set_data()
@@ -34,13 +39,13 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
     def set_data(self):
 
-        name = self.module["name"]
-        name = name.replace('-', ' ')
-        name = string.capwords(name)
+        self.name = self.module["name"]
+        self.name = self.name.replace('-', ' ')
+        self.name = string.capwords(self.name)
 
         latest_version = self.module["latest_version"]["number"]
 
-        self.labelName_2.setText(name)
+        self.labelName_2.setText(self.name)
         self.labelDesc_2.setText(self.module["description"])
         self.labelLicense_2.setText(self.module["license"])
         self.labelVersion_2.setText(latest_version)
@@ -48,11 +53,11 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         installed_module = get_module_by_id(self.module["id"])
         if installed_module is not None:
             if installed_module.version == latest_version:
-                self.pushButton.setText(ButtonState.UNINSTALL)
+                self.pushButton.setText(ButtonState.UNINSTALL.value)
                 self.buttonState = ButtonState.UNINSTALL
 
             else:
-                self.pushButton.setText(ButtonState.UPDATE)
+                self.pushButton.setText(ButtonState.UPDATE.value)
                 self.buttonState = ButtonState.UPDATE
         else:
             self.buttonState = ButtonState.INSTALL
@@ -78,17 +83,19 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         urllib.request.urlretrieve(url, zip_path)
 
         install(module, zip_path)
+        logger.info("installed " + self.name + " module")
 
-        self.pushButton.setText(ButtonState.UNINSTALL)
+        self.pushButton.setText(ButtonState.UNINSTALL.value)
         self.buttonState = ButtonState.UNINSTALL
 
     def uninstall(self):
         uninstall(self.module)
-        print("uninstalling..")
-        self.pushButton.setText(ButtonState.INSTALL)
+        logger.info("uninstalled " + self.name + " module")
+        self.pushButton.setText(ButtonState.INSTALL.value)
         self.buttonState = ButtonState.INSTALL
 
     def update(self):
         update(self.module)
-        self.pushButton.setText(ButtonState.UNINSTALL)
+        logger.info("updated " + self.name + " module")
+        self.pushButton.setText(ButtonState.UNINSTALL.value)
         self.buttonState = ButtonState.UNINSTALL
