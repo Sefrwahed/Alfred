@@ -7,7 +7,7 @@ from .ui.window_ui import Ui_MainWindow
 from .module_groupbox import ModuleGroupBox
 from .alfred_globals import modules_list_url
 
-import requests
+import alfred.modules.download as download
 import json
 
 
@@ -16,7 +16,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
-        # self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self.response = None
@@ -25,24 +24,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modules_info = list({})
 
         self.pushButtonRetry.clicked.connect(self.setup_main_window)
-
-    def get_json(self):
-        try:
-            response = requests.get(self.url)
-            return response.text
-        except requests.exceptions.ConnectionError:
-            return 0
-    # def get_json(self):
-    #     try:
-    #         response = requests.get(self.url)
-    #     except requests.exceptions.ConnectionError:
-    #         pass
-    #
-    #     self.response = [{"id": 4,"name": "alfred-weather",
-    #                  "description": "Fetch and see weather forecast on Alfred assistant",
-    #                  "license": "mit","latest_version":{"number":"0.0.1","id":1}}, {
-    #         "id": 6,"name": "alfred-app-exec","description": "Execute programs",
-    #         "license": "mit","latest_version":{"number":"1.0.0","id":1}}]
 
     def parse_json(self):
         modules_list = json.loads(self.response)
@@ -66,7 +47,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.labelError.setText("No Internet Connection")
 
     def setup_main_window(self):
-        self.response = self.get_json()
+        self.response = download.download(self.url)
         if self.response != 0:
             self.parse_json()
             self.list_modules()
