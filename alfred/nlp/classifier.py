@@ -44,13 +44,16 @@ class Classifier(metaclass=Singleton):
                 sentences.extend(m_sent)
                 targets.extend(len(m_sent) * [mi.id])
 
-        if len(sentences) != 0:
+        if sentences:
             self.classifier.fit(sentences, targets)
             pickle.dump(self.classifier, open(self.clf_path, "wb"))
 
         Logger().info("Training ended")
 
     def predict(self, sent):
-        module_id = self.classifier.predict([sent])[0]
-        Logger().info("Predicted module with id {}".format(module_id))
-        return module_id
+        if ModuleInfo.all():
+            module_id = self.classifier.predict([sent])[0]
+            Logger().info("Predicted module with id {}".format(module_id))
+            return module_id
+        else:
+            return 0
