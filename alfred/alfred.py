@@ -7,19 +7,34 @@ from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 import imp
 import os
 from . import alfred_globals as ag
-from .main_widget import MainWidget
-from .main_window import MainWindow
-from .nlp import classifier
-from .modules.module_info import get_module_by_id
+from . import data_rc
+from .views import MainWidget
+from .views import MainWindow
+from .nlp import Classifier
+from .modules import ModuleManager
+from .modules import ModuleInfo
 
 
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.init_tray_icon()
+
         self.main_widget = MainWidget()
         self.main_widget.text_changed.connect(self.process_text)
+
         self.main_window = MainWindow()
+        self.modules_mgr = ModuleManager.instance()
+
+        self.main_window.signal_list_modules.connect(
+            self.modules_mgr.fetch_data
+        )
+
+        self.modules_mgr.conn_err.connect(
+            self.main_window.handle_connection_error
+        )
+
+        self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -55,7 +70,7 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        module_info = get_module_by_id(classifier.predict(text))
+        module_info = ModuleInfo.find_by_id(Classifier().predict(text))
         if not module_info:
             return
 
@@ -66,7 +81,9 @@ class Alfred(QMainWindow):
                          module_info.entry_point())
         )
 
-        self.curr_alfred_module = getattr(mod, module_info.class_name())(module_info)
+        self.curr_alfred_module = getattr(
+            mod, module_info.class_name()
+        )(module_info)
 
         self.curr_alfred_module.run()
 

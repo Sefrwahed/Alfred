@@ -1,20 +1,15 @@
-import os
 import string
-import urllib.request
 from enum import Enum
 
 
 # Qt imports
 from PyQt5.QtWidgets import QGroupBox
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 
 from .ui.moduleGroupBox_ui import Ui_GroupBox
-from .alfred_globals import user_folder_path
-from .alfred_globals import modules_download_url
-from .modules.install import install
-from .modules.install import uninstall
-from .modules.install import update
-from .modules.module_info import get_module_by_id
-import alfred.logger as logger
+from alfred.modules import ModuleInfo
+from alfred.modules import ModuleManager
+from alfred.logger import Logger
 
 
 class ButtonState(Enum):
@@ -24,6 +19,9 @@ class ButtonState(Enum):
 
 
 class ModuleGroupBox(QGroupBox, Ui_GroupBox):
+    signal_install = pyqtSignal(dict)
+    signal_uninstall = pyqtSignal(int)
+    signal_update = pyqtSignal(dict)
 
     def __init__(self, module_info):
         QGroupBox.__init__(self)
@@ -34,11 +32,9 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.module = module_info
         self.set_data()
 
-        self.download_url = modules_download_url
         self.pushButton.clicked.connect(self.click_action)
 
     def set_data(self):
-
         self.name = self.module["name"]
         self.name = self.name.replace('-', ' ')
         self.name = string.capwords(self.name)
@@ -50,7 +46,7 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.labelLicense_2.setText(self.module["license"])
         self.labelVersion_2.setText(latest_version)
 
-        installed_module = get_module_by_id(self.module["id"])
+        installed_module = ModuleInfo.find_by_id(self.module["id"])
         if installed_module is not None:
             if installed_module.version == latest_version:
                 self.pushButton.setText(ButtonState.UNINSTALL.value)
@@ -64,38 +60,32 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
 
     def click_action(self):
         if self.buttonState == ButtonState.INSTALL:
-            self.download()
+            self.pushButton.setText("installing..")
+            self.pushButton.enabled = False
+            self.signal_install.emit(self.module)
+
         elif self.buttonState == ButtonState.UPDATE:
-            self.update()
+            ModuleManager.instance().update(self.module)
+
         elif self.buttonState == ButtonState.UNINSTALL:
-            self.uninstall()
-        else:
-            pass
+            self.signal_uninstall.emit(self.module["id"])
 
-    def download(self):
-        self.pushButton.setText("installing..")
-        self.pushButton.enabled = False
+    @pyqtSlot(int)
+    def installed(self, id):
+        if int(self.module["id"]) == id:
+            self.pushButton.setText(ButtonState.UNINSTALL.value)
+            self.buttonState = ButtonState.UNINSTALL
 
-        module = self.module
-        url = (self.download_url.replace("<id>", str(module["id"]))) \
-            .replace("<latest_vesrsion_id>", str(module["latest_version"]["id"]))
-        zip_path = os.path.join(user_folder_path, module["name"])
-        urllib.request.urlretrieve(url, zip_path)
+    @pyqtSlot(int)
+    def uninstalled(self, id):
+        if int(self.module["id"]) == id:
+            self.pushButton.setText(ButtonState.INSTALL.value)
+            self.buttonState = ButtonState.INSTALL
 
-        install(module, zip_path)
-        logger.info("installed " + self.name + " module")
+    # def uninstall(self):
+        # logger.info("uninstalled " + self.name + " module")
 
-        self.pushButton.setText(ButtonState.UNINSTALL.value)
-        self.buttonState = ButtonState.UNINSTALL
-
-    def uninstall(self):
-        uninstall(self.module)
-        logger.info("uninstalled " + self.name + " module")
-        self.pushButton.setText(ButtonState.INSTALL.value)
-        self.buttonState = ButtonState.INSTALL
-
-    def update(self):
-        update(self.module)
-        logger.info("updated " + self.name + " module")
-        self.pushButton.setText(ButtonState.UNINSTALL.value)
-        self.buttonState = ButtonState.UNINSTALL
+    # def update(self):
+        # logger.info("updated " + self.name + " module")
+        # self.pushButton.setText(ButtonState.UNINSTALL.value)
+        # self.buttonState = ButtonState.UNINSTALL

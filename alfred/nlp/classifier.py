@@ -8,45 +8,52 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
 from alfred import alfred_globals as ag
-from alfred.modules import module_info
+from alfred.patterns import Singleton
+from alfred.logger import Logger
+from alfred.modules.module_info import ModuleInfo
 
 
-clf_path = os.path.join(ag.user_folder_path, ag.clf_file)
-classifier = None
+class Classifier(metaclass=Singleton):
+    def __init__(self):
+        self.clf_path = os.path.join(ag.user_folder_path, ag.clf_file)
 
+        if os.path.exists(self.clf_path):
+            self.classifier = pickle.load(open(self.clf_path, "rb"))
+        else:
+            self.train()
 
-def train():
-    all_info = module_info.get_all_module_info()
-    global classifier
-    classifier = Pipeline([
-        ('vect', CountVectorizer(
-            analyzer='word', stop_words='english', ngram_range=(1, 3)
-        )),
-        ('tfidf', TfidfTransformer()),
-        ('clf', MultinomialNB())
-    ])
+    def train(self):
+        Logger().info("Training started")
 
-    sentences = []
-    targets = []
+        all_info = ModuleInfo.all()
+        self.classifier = Pipeline([
+            ('vect', CountVectorizer(
+                analyzer='word', stop_words='english', ngram_range=(1, 3)
+            )),
+            ('tfidf', TfidfTransformer()),
+            ('clf', MultinomialNB())
+        ])
 
-    for mi in all_info:
-        with open(mi.training_sentences_json_file_path()) as train_file:
-            m_sent = json.load(train_file)
+        sentences = []
+        targets = []
 
-            sentences.extend(m_sent)
-            targets.extend(len(m_sent) * [mi.id])
+        for mi in all_info:
+            with open(mi.training_sentences_json_file_path()) as train_file:
+                m_sent = json.load(train_file)
 
-    if len(sentences) != 0:
-        classifier.fit(sentences, targets)
-        pickle.dump(classifier, open(clf_path, "wb"))
+                sentences.extend(m_sent)
+                targets.extend(len(m_sent) * [mi.id])
 
+        if sentences:
+            self.classifier.fit(sentences, targets)
+            pickle.dump(self.classifier, open(self.clf_path, "wb"))
 
-def predict(sent):
-    global classifier
-    module_id = classifier.predict([sent])[0]
-    return module_id
+        Logger().info("Training ended")
 
-if os.path.exists(clf_path):
-    classifier = pickle.load(open(clf_path, "rb"))
-else:
-    train()
+    def predict(self, sent):
+        if ModuleInfo.all():
+            module_id = self.classifier.predict([sent])[0]
+            Logger().info("Predicted module with id {}".format(module_id))
+            return module_id
+        else:
+            return 0
