@@ -1,5 +1,3 @@
-from alfred.lib import Singleton
-
 import os
 
 from sqlalchemy import create_engine
@@ -7,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import sessionmaker
 
 from alfred import alfred_globals as ag
-from alfred.lib import Singleton
+from alfred.patterns import Singleton
 
 
 class DBManager(metaclass=Singleton):

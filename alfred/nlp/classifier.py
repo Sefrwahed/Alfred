@@ -8,7 +8,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
 from alfred import alfred_globals as ag
-from alfred.lib import Singleton
+from alfred.patterns import Singleton
 from alfred.logger import Logger
 from alfred.modules.module_info import ModuleInfo
 
