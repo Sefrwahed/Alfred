@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import sessionmaker
 
 from alfred import alfred_globals as ag
-from alfred.patterns import Singleton
+from alfred.utils import Singleton
 
 
 class DBManager(metaclass=Singleton):

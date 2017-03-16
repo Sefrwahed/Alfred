@@ -2,7 +2,7 @@ from logbook import Logger as l, StreamHandler
 import sys
 
 # Local includes
-from alfred.patterns import Singleton
+from alfred.utils import Singleton
 import alfred.alfred_globals as ag
 
 
