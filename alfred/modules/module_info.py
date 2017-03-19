@@ -29,7 +29,7 @@ class ModuleInfo(DBManager().DBModelBase):
 
     def training_sentences_json_file_path(self):
         return os.path.join(self.root(),
-                            self.name,
+                            self.package_name(),
                             'resources',
                             'training_sentences.json')
 
