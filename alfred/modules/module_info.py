@@ -1,4 +1,5 @@
 import os
+import re
 from sqlalchemy import Column, Integer, String
 
 from alfred import alfred_globals as ag
@@ -28,13 +29,18 @@ class ModuleInfo(DBManager().DBModelBase):
 
     def training_sentences_json_file_path(self):
         return os.path.join(self.root(),
-                            "training_sentences.json")
+                            self.name,
+                            'resources',
+                            'training_sentences.json')
+
+    def package_name(self) -> str:
+        return re.sub(r'\W', '_', self.name)
 
     def entry_point(self):
-        return self.name + ".py"
+        return self.package_name() + ".py"
 
     def class_name(self):
-        return "".join(w.title() for w in self.name.split("-"))
+        return "".join(w.title() for w in self.package_name().split("_"))
 
     def create(self):
         DBManager().session.add(self)

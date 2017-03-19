@@ -10,7 +10,7 @@ class ABaseModule(ABC):
         self.components = []
         self.module_info = module_info
         self.settings = Settings(os.path.join(
-            self.module_info.root(), 'settings.json'))
+            self.module_info.root(), 'data', 'settings.json'))
 
     def run(self):
         self.callback()

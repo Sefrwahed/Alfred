@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
 # Local imports
-import imp
+import sys
 import os
 from . import alfred_globals as ag
 from . import data_rc
@@ -74,15 +74,16 @@ class Alfred(QMainWindow):
         if not module_info:
             return
 
-        mod = imp.load_source(
-            module_info.entry_point(),
-            os.path.join(ag.modules_folder_path,
-                         module_info.root(),
-                         module_info.entry_point())
-        )
+        if module_info.root() in sys.path:
+            sys.path.remove(module_info.root())
+        sys.path.append(module_info.root())
+
+        package_name = module_info.package_name()
+        module = __import__(f'{package_name}.{package_name}',
+                            fromlist=package_name)
 
         self.curr_alfred_module = getattr(
-            mod, module_info.class_name()
+            module, module_info.class_name()
         )(module_info)
 
         self.curr_alfred_module.run()
