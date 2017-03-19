@@ -19,6 +19,11 @@ user_home_path = os.path.expanduser("~")
 user_folder_name = "." + APP_NAME.lower()
 user_folder_path = os.path.join(user_home_path, user_folder_name)
 
+
+def global_file_path(global_file):
+    return os.path.join(user_folder_path, global_file)
+
+
 # Database
 db_name = "alfred.db"
 
