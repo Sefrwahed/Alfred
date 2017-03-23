@@ -1,0 +1,22 @@
+from .a_component import AComponent
+from jinja2 import Environment, FileSystemLoader
+
+class AReadyTemplate(AComponent):
+    def __init__(self,raw_data,*args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.raw_data = raw_data
+
+    def __str__(self):
+	"""
+        path = Environment(
+        loader=FileSystemLoader('/home/mahmoudrizk/.alfred/modules/alfredhub/tootis/alfred-weather'),
+        autoescape=False
+        )
+        template = path.get_template("weather.html")
+	"""        
+	
+	template = ag.main_components_env.get_template("weather.html")
+	return template.render(raw_data=self.raw_data)
+
+    def tagname(self):
+        return ''
