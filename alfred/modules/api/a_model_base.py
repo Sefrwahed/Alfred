@@ -10,15 +10,18 @@ class AModelBase(ABC):
 
     def save(self):
         objects = db[type(self).__name__]
-        if objects.find_one(id=self.id):
-            objects.update(self.__dict__, ['id'])
-        else:
+        if not objects.find_one(id=self.id):
             self.id = objects.insert(self.__dict__)
+        else:
+            objects.update(self.__dict__, ['id'])
 
     @classmethod
     def find(cls, id):
         model = cls()
-        model.__dict__ = db[cls.__name__].find_one(id=id)
+        data = db[cls.__name__].find_one(id=id)
+        if data is None:
+            return None
+        model.__dict__ = data
         return model
 
     @classmethod
