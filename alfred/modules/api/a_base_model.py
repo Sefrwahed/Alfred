@@ -4,7 +4,7 @@ import dataset
 db = dataset.connect('sqlite:///db')
 
 
-class AModelBase(ABC):
+class ABaseModel(ABC):
     def __init__(self):
         self._id = None
 
