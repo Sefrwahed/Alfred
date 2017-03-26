@@ -1,4 +1,3 @@
-import json
 import os
 from abc import ABC, abstractmethod
 
@@ -9,8 +8,13 @@ class ABaseModule(ABC):
     def __init__(self, module_info, entities=''):
         self.components = []
         self.module_info = module_info
-        self.settings = Settings(os.path.join(
-            self.module_info.root(), 'data', 'settings.json'))
+
+        settings_path = os.path.join(self.module_info.root(),
+                                     'data', 'settings.json')
+        self.settings = Settings(settings_path)
+
+        self.database_path = os.path.join(self.module_info.root(),
+                                          'data', 'db.sqlite')
 
     def run(self):
         self.callback()
@@ -26,4 +30,3 @@ class ABaseModule(ABC):
     @abstractmethod
     def construct_view(self):
         pass
-

@@ -1,9 +1,14 @@
 from abc import ABC
+
 import dataset
 
 
 class AbstractABaseModel(ABC):
     database = None
+
+    @classmethod
+    def connect(cls, database_path):
+        cls.database = dataset.connect(f'sqlite:///{database_path}')
 
     def __init__(self):
         self._id = None
@@ -49,11 +54,3 @@ class AbstractABaseModel(ABC):
             obj.__dict__ = m
             objects.append(obj)
         return objects
-
-
-def ABaseModel(database_name):
-    CustomABaseModel = type('ABaseModel',
-                            AbstractABaseModel.__bases__,
-                            dict(AbstractABaseModel.__dict__))
-    CustomABaseModel.database = dataset.connect(f'sqlite:///{database_name}')
-    return CustomABaseModel
