@@ -3,7 +3,7 @@ import dataset
 
 
 class ABaseModel(ABC):
-    database = dataset.connect('sqlite:///db')
+    database = None
 
     def __init__(self):
         self._id = None
@@ -49,3 +49,10 @@ class ABaseModel(ABC):
             obj.__dict__ = m
             objects.append(obj)
         return objects
+
+
+def custom_db_base_model(database_name):
+    CustomABaseModel = type('ABaseModel', ABaseModel.__bases__,
+                            dict(ABaseModel.__dict__))
+    CustomABaseModel.database = dataset.connect(f'sqlite:///{database_name}')
+    return CustomABaseModel
