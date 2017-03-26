@@ -34,23 +34,33 @@ class AbstractABaseModel(ABC):
             objects.update(data_dict, ['id'])  # update record
 
     @classmethod
-    def find(cls, id):
-        model = cls()
-        data_dict = dict(cls.database[cls.__name__].find_one(id=id))
+    def find_by(cls, **kwargs):
+        model = cls.__new__(cls)
+        dataset_dict = cls.database[cls.__name__].find_one(**kwargs)
 
-        if data_dict is None:
+        if dataset_dict is None:
             return None
 
+        data_dict = dict(dataset_dict)
+
+        data_dict['_id'] = data_dict['id']
         del data_dict['id']
         model.__dict__ = data_dict
-        model._id = id
         return model
+
+    @classmethod
+    def find(cls, id):
+        return cls.find_by(id=id)
 
     @classmethod
     def all(cls):
         objects = []
         for m in cls.database[cls.__name__].all():
-            obj = cls()
+            obj = cls.__new__(cls)
             obj.__dict__ = m
             objects.append(obj)
         return objects
+
+    @classmethod
+    def delete(cls, model_id):
+        return cls.database[cls.__name__].delete(id=model_id)
