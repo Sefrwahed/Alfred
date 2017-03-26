@@ -2,7 +2,7 @@ from abc import ABC
 import dataset
 
 
-class ABaseModel(ABC):
+class AbstractABaseModel(ABC):
     database = None
 
     def __init__(self):
@@ -51,8 +51,9 @@ class ABaseModel(ABC):
         return objects
 
 
-def custom_db_base_model(database_name):
-    CustomABaseModel = type('ABaseModel', ABaseModel.__bases__,
-                            dict(ABaseModel.__dict__))
+def ABaseModel(database_name):
+    CustomABaseModel = type('ABaseModel',
+                            AbstractABaseModel.__bases__,
+                            dict(AbstractABaseModel.__dict__))
     CustomABaseModel.database = dataset.connect(f'sqlite:///{database_name}')
     return CustomABaseModel
