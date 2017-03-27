@@ -59,7 +59,7 @@ class Alfred(QMainWindow):
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
     def tray_icon_activated(self, reason):
-        if(reason == QSystemTrayIcon.Trigger):
+        if (reason == QSystemTrayIcon.Trigger):
             self.show_main_widget()
 
     def show_main_widget(self):
@@ -82,9 +82,9 @@ class Alfred(QMainWindow):
         module = __import__(f'{package_name}.{package_name}',
                             fromlist=package_name)
 
-        self.curr_alfred_module = getattr(
-            module, module_info.class_name()
-        )(module_info)
+        ModuleClass = getattr(module, module_info.class_name())
+
+        self.curr_alfred_module = ModuleClass(module_info)
 
         self.curr_alfred_module.run()
 
