@@ -3,7 +3,7 @@ from abc import ABC
 import dataset
 
 
-class AbstractABaseModel(ABC):
+class ABaseModel(ABC):
     database = None
 
     @classmethod
@@ -33,10 +33,31 @@ class AbstractABaseModel(ABC):
         else:
             objects.update(data_dict, ['id'])  # update record
 
+    def delete(self):
+        cls = self.__class__
+        return cls.database[cls.__name__].delete(id=self._id)
+
     @classmethod
     def find_by(cls, **kwargs):
-        model = cls.__new__(cls)
         dataset_dict = cls.database[cls.__name__].find_one(**kwargs)
+        model = cls.__populate_model(dataset_dict)
+        return model
+
+    @classmethod
+    def find(cls, id):
+        return cls.find_by(id=id)
+
+    @classmethod
+    def all(cls):
+        models = []
+        for d in cls.database[cls.__name__].all():
+            model = cls.__populate_model(d)
+            models.append(model)
+        return models
+
+    @classmethod
+    def __populate_model(cls, dataset_dict):
+        model = cls.__new__(cls)
 
         if dataset_dict is None:
             return None
@@ -46,21 +67,5 @@ class AbstractABaseModel(ABC):
         data_dict['_id'] = data_dict['id']
         del data_dict['id']
         model.__dict__ = data_dict
+
         return model
-
-    @classmethod
-    def find(cls, id):
-        return cls.find_by(id=id)
-
-    @classmethod
-    def all(cls):
-        objects = []
-        for m in cls.database[cls.__name__].all():
-            obj = cls.__new__(cls)
-            obj.__dict__ = m
-            objects.append(obj)
-        return objects
-
-    @classmethod
-    def delete(cls, model_id):
-        return cls.database[cls.__name__].delete(id=model_id)
