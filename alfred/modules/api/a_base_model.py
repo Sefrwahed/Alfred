@@ -1,16 +1,19 @@
 from abc import ABC
 
+import threading
 import dataset
-
 
 class ABaseModel(ABC):
     database = None
+    db_path = ''
 
     @classmethod
-    def connect(cls, database_path):
-        cls.database = dataset.connect(f'sqlite:///{database_path}')
+    def db_path(cls, db_path):
+        print("model connect", threading.get_ident())
+        cls.db_path = db_path
 
     def __init__(self):
+        self.database = dataset.connect(f'sqlite:///{self.db_path}')
         self._id = None
 
     @property
@@ -49,6 +52,7 @@ class ABaseModel(ABC):
 
     @classmethod
     def all(cls):
+        cls.database = dataset.connect(f'sqlite:///{cls.db_path}')
         models = []
         for d in cls.database[cls.__name__].all():
             model = cls.__populate_model(d)
