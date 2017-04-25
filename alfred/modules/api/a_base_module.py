@@ -1,9 +1,11 @@
 import os
-import dataset
-from jinja2 import Environment, FileSystemLoader
-from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
-from alfred.settings import Settings
 import threading
+
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
+from jinja2 import Environment, FileSystemLoader
+
+from alfred.settings import Settings
+import alfred.modules.api.a_module_globals as amg
 
 
 class ABaseModule(QThread):
@@ -18,8 +20,8 @@ class ABaseModule(QThread):
                                      'data', 'settings.json')
         self.settings = Settings(settings_path)
 
-        self.database_path = os.path.join(self.module_info.root(),
-                                          'data', 'db.sqlite')
+        amg.module_db_path = os.path.join(self.module_info.root(),
+                                      'data', 'db.sqlite')
 
         self.template_env = Environment(
             loader=FileSystemLoader(
@@ -33,11 +35,16 @@ class ABaseModule(QThread):
         )
 
         self.html = ''
+        self.callback_method = None
+        self.callback_method_args = []
 
     def run(self):
         print("run", threading.get_ident())
-        self.callback()
-        self.construct_view()
+        if self.callback_method is None:
+            self.callback()
+            self.construct_view()
+        else:
+            self.callback_method(*self.callback_method_args)
 
     def callback(self):
         pass
@@ -60,13 +67,14 @@ class ABaseModule(QThread):
     def event_triggered(self, element_id, event):
         callback_method = f'on_{element_id}_{event}'
         if hasattr(self, callback_method):
-            callback_method = getattr(self, callback_method)
-            callback_method()
+            self.callback_method = getattr(self, callback_method)
+            self.start()
 
     @pyqtSlot(str, str)
     def value_submitted(self, element_id, val):
         print("val sub", threading.get_ident())
         callback_method = f'on_{element_id}_submitted'
         if hasattr(self, callback_method):
-            callback_method = getattr(self, callback_method)
-            callback_method(val)
+            self.callback_method = getattr(self, callback_method)
+            self.callback_method_args = [val]
+            self.start()

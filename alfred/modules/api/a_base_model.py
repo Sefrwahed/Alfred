@@ -1,19 +1,15 @@
 from abc import ABC
 
-import threading
 import dataset
+
+import alfred.modules.api.a_module_globals as amg
+
 
 class ABaseModel(ABC):
     database = None
-    db_path = ''
-
-    @classmethod
-    def db_path(cls, db_path):
-        print("model connect", threading.get_ident())
-        cls.db_path = db_path
 
     def __init__(self):
-        self.database = dataset.connect(f'sqlite:///{self.db_path}')
+        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
         self._id = None
 
     @property
@@ -21,8 +17,7 @@ class ABaseModel(ABC):
         return self._id
 
     def save(self):
-        cls = type(self)
-        objects = cls.database[cls.__name__]
+        objects = self.database[self.__class__.__name__]
 
         data_dict = self.__dict__.copy()
         exists = objects.find_one(id=self._id)
@@ -33,30 +28,39 @@ class ABaseModel(ABC):
 
         if not exists:
             self._id = objects.insert(data_dict)  # new record
+            print(self._id)
         else:
             objects.update(data_dict, ['id'])  # update record
 
+        ABaseModel.database.commit()
+
     def delete(self):
-        cls = self.__class__
-        return cls.database[cls.__name__].delete(id=self._id)
+        return self.database[self.__class__.__name__].delete(id=self._id)
 
     @classmethod
     def find_by(cls, **kwargs):
+        cls.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+
         dataset_dict = cls.database[cls.__name__].find_one(**kwargs)
         model = cls.__populate_model(dataset_dict)
+
+        del cls.database
         return model
 
     @classmethod
     def find(cls, id):
-        return cls.find_by(id=id)
+        return cls.find_by(db_path, id=id)
 
     @classmethod
     def all(cls):
-        cls.database = dataset.connect(f'sqlite:///{cls.db_path}')
+        cls.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+
         models = []
         for d in cls.database[cls.__name__].all():
             model = cls.__populate_model(d)
             models.append(model)
+
+        del cls.database
         return models
 
     @classmethod
