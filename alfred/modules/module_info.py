@@ -59,3 +59,6 @@ class ModuleInfo(DBManager().DBModelBase):
     @classmethod
     def all(cls):
         return DBManager().session.query(ModuleInfo).all()
+
+
+DBManager().refresh_tables()
