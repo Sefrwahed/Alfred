@@ -1,6 +1,8 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 </head>
 <body>
   <div class="content">
@@ -8,5 +10,23 @@
       {{c}}
   {% endfor -%}
   </div>
+
+  <script>
+    $(document).ready(function(){
+      new QWebChannel(qt.webChannelTransport, function(channel){
+        {%- for e in ['click', 'change'] %}
+          $(".aw").on("{{e}}", function() {
+            channel.objects.web_bridge.broadcast_event($(this).attr("id"), "{{e}}");
+          });
+        {% endfor %}
+
+        $(".aw-submit").click(function() {
+          var input_id = $(this).data('input-id');
+          var val = $("#" + input_id).val();
+          channel.objects.web_bridge.value_submitted(input_id, val);
+        });
+      });
+    });
+  </script>
 </body>
 </html>

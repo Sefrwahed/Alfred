@@ -1,7 +1,11 @@
-from jinja2 import Environment, FileSystemLoader
+# Python builtins imports
 import os
 import sys
 
+# Libs imports
+from jinja2 import Environment, FileSystemLoader
+
+# Local imports
 from alfred.settings import Settings
 
 APP_NAME = "Alfred"
@@ -11,6 +15,8 @@ main_components_env = Environment(
     loader=FileSystemLoader(os.path.join('alfred', 'modules', 'templates')),
     autoescape=False
 )
+
+js_path = os.path.abspath(os.path.join('alfred', 'resources', 'js'))
 
 # Adding api to sys.path
 sys.path.extend([os.path.join('alfred', 'modules', 'api')])
