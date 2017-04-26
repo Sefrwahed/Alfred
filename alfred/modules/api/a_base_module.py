@@ -43,6 +43,7 @@ class ABaseModule(QThread):
         if self.callback_method is None:
             self.callback()
             self.construct_view()
+            self.populate_view()
         else:
             self.callback_method(*self.callback_method_args)
 
@@ -58,7 +59,10 @@ class ABaseModule(QThread):
     def render_template(self, t_name, **kwargs):
         t = self.template_env.get_template(t_name)
         html = t.render(**kwargs)
-        self.signal_view_changed.emit([html])
+        self.add_component(html)
+
+    def populate_view(self):
+        self.signal_view_changed.emit(self.components)
 
     def get_input_value(self, input_id):
         return self.web_content_helper.get_input_value(input_id)
