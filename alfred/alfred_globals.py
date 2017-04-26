@@ -1,6 +1,8 @@
 from jinja2 import Environment, FileSystemLoader
 import os
 import sys
+import pathlib
+import json
 
 from alfred.settings import Settings
 
@@ -30,6 +32,11 @@ db_name = "alfred.db"
 # Classifier
 clf_file = "classifier.pkl"
 
+# SpaCy
+spacy_path = "/usr/local/lib/python3.5/dist-packages/spacy/data/en-1.1.0/"
+spacy_ner_path = pathlib.Path(spacy_path + "ner/")
+with open(spacy_path + "vocab/tag_map.json", "r") as d:
+    spacy_tag_map = json.load(d)
 # Log
 LOG_FILE = 'log'
 
