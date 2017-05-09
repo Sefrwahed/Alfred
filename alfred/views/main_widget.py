@@ -38,5 +38,5 @@ class MainWidget(QDialog, Ui_Dialog):
     def set_view(self, components):
         temp = ag.main_components_env.get_template("base.html")
         html = temp.render(componenets=components)
-
+        # print(html)
         self.webView.page().setHtml(html)

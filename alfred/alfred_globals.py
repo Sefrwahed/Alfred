@@ -12,7 +12,13 @@ APP_NAME = "Alfred"
 WIT_TOKEN = "GMCAOZ4HFZ3Q5K7FNOFIQSR6VCM6NA47"
 
 main_components_env = Environment(
-    loader=FileSystemLoader(os.path.join('alfred', 'modules', 'templates')),
+    loader=FileSystemLoader(
+        [
+            os.path.join('alfred', 'modules', 'templates'),
+            os.path.join('alfred', 'resources', 'css'),
+            os.path.join('alfred', 'resources', 'js')
+        ]
+    ),
     autoescape=False
 )
 

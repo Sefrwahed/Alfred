@@ -17,7 +17,8 @@ class ABaseModel(ABC):
         return self._id
 
     def save(self):
-        objects = self.database[self.__class__.__name__]
+        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        objects = ABaseModel.database[self.__class__.__name__]
 
         data_dict = self.__dict__.copy()
         exists = objects.find_one(id=self._id)
@@ -28,14 +29,15 @@ class ABaseModel(ABC):
 
         if not exists:
             self._id = objects.insert(data_dict)  # new record
-            print(self._id)
         else:
             objects.update(data_dict, ['id'])  # update record
 
         ABaseModel.database.commit()
 
     def delete(self):
-        return self.database[self.__class__.__name__].delete(id=self._id)
+        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        ABaseModel.database[self.__class__.__name__].delete(id=self._id)
+        ABaseModel.database.commit()
 
     @classmethod
     def find_by(cls, **kwargs):
@@ -49,7 +51,7 @@ class ABaseModel(ABC):
 
     @classmethod
     def find(cls, id):
-        return cls.find_by(db_path, id=id)
+        return cls.find_by(id=id)
 
     @classmethod
     def all(cls):

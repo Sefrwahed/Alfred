@@ -95,5 +95,5 @@ class Alfred(QMainWindow):
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
-        self.web_bridge.signal_value_submitted.connect(self.curr_module.value_submitted)
+        self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
         self.curr_module.start()

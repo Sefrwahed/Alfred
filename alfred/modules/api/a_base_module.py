@@ -39,7 +39,6 @@ class ABaseModule(QThread):
         self.callback_method_args = []
 
     def run(self):
-        print("run", threading.get_ident())
         if self.callback_method is None:
             self.callback()
             self.construct_view()
@@ -64,21 +63,18 @@ class ABaseModule(QThread):
     def populate_view(self):
         self.signal_view_changed.emit(self.components)
 
-    def get_input_value(self, input_id):
-        return self.web_content_helper.get_input_value(input_id)
-
-    @pyqtSlot(str, str)
-    def event_triggered(self, element_id, event):
+    @pyqtSlot(str, str, dict)
+    def event_triggered(self, element_id, event, attrs):
         callback_method = f'on_{element_id}_{event}'
         if hasattr(self, callback_method):
             self.callback_method = getattr(self, callback_method)
+            self.callback_method_args = [attrs]
             self.start()
 
-    @pyqtSlot(str, str)
-    def value_submitted(self, element_id, val):
-        print("val sub", threading.get_ident())
-        callback_method = f'on_{element_id}_submitted'
+    @pyqtSlot(str, dict)
+    def form_submitted(self, form_id, form_vals):
+        callback_method = f'on_{form_id}_submitted'
         if hasattr(self, callback_method):
             self.callback_method = getattr(self, callback_method)
-            self.callback_method_args = [val]
+            self.callback_method_args = [form_vals]
             self.start()
