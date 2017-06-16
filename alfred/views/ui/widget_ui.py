@@ -1,9 +1,11 @@
+# Python builtins
+import os
+
+# PyQt imports
 from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtCore import QUrl, QMetaObject, QRect, QFileInfo
-
-import os
 
 
 class Ui_Dialog(object):
@@ -83,6 +85,8 @@ class Ui_Dialog(object):
         self.webView = QtWebEngineWidgets.QWebEngineView(
             self.scrollAreaWidgetContents
         )
+
+        self.webView.page().settings().setAttribute(QWebEngineSettings.LocalContentCanAccessFileUrls, True)
         self.webView.setStyleSheet(
             "QWebEngineView { \n"
             "    background-color: rgba(0, 0, 0, 0);\n"
@@ -92,7 +96,6 @@ class Ui_Dialog(object):
         self.webView.show()
         self.webView.page().setBackgroundColor(QtCore.Qt.transparent)
 
-        self.webView.page().urlChanged.connect(self.link_slot)
         self.gridLayout.addWidget(self.webView, 0, 0, 1, 1)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -102,10 +105,6 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QMetaObject.connectSlotsByName(Dialog)
-
-    def link_slot(self, url):
-        print("go go go go")
-        print(url)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate

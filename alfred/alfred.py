@@ -1,18 +1,19 @@
+# Python builtins imports
+import sys
+
 # PyQt imports
 from PyQt5.QtCore import QCoreApplication, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
 # Local imports
-import sys
-import os
-from . import alfred_globals as ag
 from . import data_rc
 from .views import MainWidget
 from .views import MainWindow
 from .nlp import Classifier
 from .modules import ModuleManager
 from .modules import ModuleInfo
+from .utils import WebBridge
 
 
 class Alfred(QMainWindow):
@@ -20,7 +21,8 @@ class Alfred(QMainWindow):
         QMainWindow.__init__(self)
         self.init_tray_icon()
 
-        self.main_widget = MainWidget()
+        self.web_bridge = WebBridge()
+        self.main_widget = MainWidget(self.web_bridge)
         self.main_widget.text_changed.connect(self.process_text)
 
         self.main_window = MainWindow()
@@ -35,6 +37,7 @@ class Alfred(QMainWindow):
         )
 
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
+        self.curr_module = None
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -59,7 +62,7 @@ class Alfred(QMainWindow):
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
     def tray_icon_activated(self, reason):
-        if (reason == QSystemTrayIcon.Trigger):
+        if reason == QSystemTrayIcon.Trigger:
             self.show_main_widget()
 
     def show_main_widget(self):
@@ -71,6 +74,7 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         module_info = ModuleInfo.find_by_id(Classifier().predict(text))
+
         if not module_info:
             return
 
@@ -79,15 +83,17 @@ class Alfred(QMainWindow):
         sys.path.append(module_info.root())
 
         package_name = module_info.package_name()
-        module = __import__(f'{package_name}.{package_name}',
+        module = __import__('{}.{}'.format(package_name, package_name),
                             fromlist=package_name)
 
-        ModuleClass = getattr(module, module_info.class_name())
+        if self.curr_module is not None:
+            self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
 
-        self.curr_alfred_module = ModuleClass(module_info)
+        self.curr_module = getattr(
+            module, module_info.class_name()
+        )(module_info)
 
-        self.curr_alfred_module.run()
-
-        temp = ag.main_components_env.get_template("base.html")
-        html = temp.render(componenets=self.curr_alfred_module.components)
-        self.main_widget.webView.page().setHtml(html)
+        self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
+        self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
+        self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
+        self.curr_module.start()

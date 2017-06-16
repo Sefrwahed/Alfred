@@ -1,12 +1,73 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script>{% include "jquery.min.js" %}</script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+  <script>{% include "materialize.min.js" %}</script>
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>{% include "materialize.css" %}</style>
+  <style>html { color: #f5f5f5 }</style>
 </head>
 <body>
-  <div class="content">
+  <div class="container">
   {%- for c in componenets %}
       {{c}}
   {% endfor -%}
   </div>
+
+  <script>
+    (function(old) {
+      $.fn.attr = function() {
+        if(arguments.length === 0) {
+          if(this.length === 0) {
+            return null;
+          }
+
+          var obj = {};
+          $.each(this[0].attributes, function() {
+            if(this.specified) {
+              obj[this.name] = this.value;
+            }
+          });
+          return JSON.stringify(obj);
+        }
+
+        return old.apply(this, arguments);
+      };
+    })($.fn.attr);
+
+    $(document).ready(function(){
+      new QWebChannel(qt.webChannelTransport, function(channel){
+        $(".container").on("click change", "*", function(e) {
+          channel.objects.web_bridge.broadcast_event(
+            $(this).prop("tagName").toLowerCase(),
+            e.type,
+            $(this).attr()
+          );
+
+          if ( $(this).prop("tagName").toLowerCase() == "input" ) {
+            channel.objects.web_bridge.broadcast_event(
+              $(this).attr("type").toLowerCase(), e.type, $(this).attr()
+            );
+          }
+
+          if ( $(this).attr("id") ) {
+            channel.objects.web_bridge.broadcast_event($(this).attr("id"), e.type, $(this).attr());
+          }
+        });
+
+        $("form").submit(function(e) {
+          e.preventDefault();
+          var vals_obj = {};
+
+          $(this).find("input").each(function() {
+            vals_obj[$(this).attr("name")] = $(this).val();
+          });
+
+          channel.objects.web_bridge.form_submitted($(this).attr("id"), JSON.stringify(vals_obj));
+        });
+      });
+    });
+  </script>
 </body>
 </html>

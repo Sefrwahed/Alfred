@@ -3,15 +3,25 @@ from alfred import alfred_globals as ag
 
 
 class AComponent(ABC):
+    def __new__(cls, *args, **kwargs):
+        obj = super().__new__(cls)
+        obj.attrs = {}
+        return obj
+
     def __init__(self, *args, **kwargs):
-        self.attrs = kwargs
+        if hasattr(self, "attrs"):
+            default_classes = self.attrs.get("class", "")
+            self.attrs = kwargs
+            self.attrs["class"] = self.attrs.get("class", "") + " {}".format(default_classes)
+        else:
+            self.attrs = kwargs
         self.content = list(args)
 
     def set_content(self, *args):
         self.content = list(args)
 
     def add_to_content(self, *args):
-        self.content += args
+        self.content.extend(args)
 
     @abstractmethod
     def tagname(self):
