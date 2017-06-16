@@ -12,7 +12,7 @@ class AComponent(ABC):
         if hasattr(self, "attrs"):
             default_classes = self.attrs.get("class", "")
             self.attrs = kwargs
-            self.attrs["class"] = self.attrs.get("class", "") + f" {default_classes}"
+            self.attrs["class"] = self.attrs.get("class", "") + " {}".format(default_classes)
         else:
             self.attrs = kwargs
         self.content = list(args)

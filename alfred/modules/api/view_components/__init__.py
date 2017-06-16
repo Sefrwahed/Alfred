@@ -1,7 +1,6 @@
 from .a_action_icon import AActionIcon
 from .a_button import AButton
 from .a_checkbox import ACheckbox
-from .a_checklist import AChecklist
 from .a_column import AColumn
 from .a_component import AComponent
 from .a_composite_component import ACompositeComponent

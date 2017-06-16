@@ -9,7 +9,7 @@ class ABaseModel(ABC):
     database = None
 
     def __init__(self):
-        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        ABaseModel.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
         self._id = None
 
     @property
@@ -17,7 +17,7 @@ class ABaseModel(ABC):
         return self._id
 
     def save(self):
-        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        ABaseModel.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
         objects = ABaseModel.database[self.__class__.__name__]
 
         data_dict = self.__dict__.copy()
@@ -35,13 +35,13 @@ class ABaseModel(ABC):
         ABaseModel.database.commit()
 
     def delete(self):
-        ABaseModel.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        ABaseModel.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
         ABaseModel.database[self.__class__.__name__].delete(id=self._id)
         ABaseModel.database.commit()
 
     @classmethod
     def find_by(cls, **kwargs):
-        cls.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        cls.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
 
         dataset_dict = cls.database[cls.__name__].find_one(**kwargs)
         model = cls.__populate_model(dataset_dict)
@@ -55,7 +55,7 @@ class ABaseModel(ABC):
 
     @classmethod
     def all(cls):
-        cls.database = dataset.connect(f'sqlite:///{amg.module_db_path}')
+        cls.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
 
         models = []
         for d in cls.database[cls.__name__].all():

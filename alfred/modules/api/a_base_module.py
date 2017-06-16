@@ -65,7 +65,7 @@ class ABaseModule(QThread):
 
     @pyqtSlot(str, str, dict)
     def event_triggered(self, element_id, event, attrs):
-        callback_method = f'on_{element_id}_{event}'
+        callback_method = 'on_{}_{}'.format(element_id, event)
         if hasattr(self, callback_method):
             self.callback_method = getattr(self, callback_method)
             self.callback_method_args = [attrs]
@@ -73,7 +73,7 @@ class ABaseModule(QThread):
 
     @pyqtSlot(str, dict)
     def form_submitted(self, form_id, form_vals):
-        callback_method = f'on_{form_id}_submitted'
+        callback_method = 'on_{}_submitted'.format(form_id)
         if hasattr(self, callback_method):
             self.callback_method = getattr(self, callback_method)
             self.callback_method_args = [form_vals]

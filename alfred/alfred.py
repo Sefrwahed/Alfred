@@ -83,7 +83,7 @@ class Alfred(QMainWindow):
         sys.path.append(module_info.root())
 
         package_name = module_info.package_name()
-        module = __import__(f'{package_name}.{package_name}',
+        module = __import__('{}.{}'.format(package_name, package_name),
                             fromlist=package_name)
 
         if self.curr_module is not None:
