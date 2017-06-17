@@ -1,6 +1,4 @@
-from spacy.vocab import Vocab
-from spacy.pipeline import EntityRecognizer
-from spacy.tokens.doc import Doc
+import spacy
 
 from alfred import alfred_globals as ag
 from alfred.utils import Singleton
@@ -8,19 +6,19 @@ from alfred.utils import Singleton
 
 class NER(metaclass=Singleton):
     def __init__(self):
-        self._spacyVocab = Vocab.load(path=ag.spacy_path,
-                                      tag_map=ag.spacy_tag_map,
-                                      oov_prob=-19.502029)
-        self._spacyER = EntityRecognizer.load(path=ag.spacy_ner_path,
-                                              vocab=self._spacyVocab,
-                                              require=True)
+        self.spacyNlp = spacy.load('en', parser=None)
 
-    def make_doc(self, text):
-        import jieba
-        words = list(jieba.cut(text, cut_all=True))
-        return Doc(self._spacyVocab, words=words, spaces=[False]*len(words))
+    def getNERSpacy(self, text):
+        doc = self.spacyNlp(text)
+        entities = {}
+        for ent in doc.ents:
+            if ent.label_ in entities:
+                entities[ent.label_].append(ent)
+            else:
+                entities[ent.label_] = [ent]
+        return entities
 
-    def spacyNER(self, sentence):
-        doc = self.make_doc(sentence)
-        self._spacyER.__call__(doc)
-        return doc
+    def getNameEntities(self, entities_types_list, text):
+        entities = self.getNERSpacy(text)
+        return {entities_type: entities[entities_type]
+                for entities_type in entities_types_list}
