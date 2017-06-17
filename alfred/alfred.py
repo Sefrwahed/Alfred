@@ -88,12 +88,17 @@ class Alfred(QMainWindow):
 
         if self.curr_module is not None:
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
+            self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
         self.curr_module = getattr(
             module, module_info.class_name()
         )(module_info)
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
+        self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
+        self.curr_module.signal_append_content.connect(self.main_widget.append_content)
+
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
+
         self.curr_module.start()
