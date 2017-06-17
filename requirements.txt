@@ -21,3 +21,4 @@ sip==4.18.1
 six==1.10.0
 tldextract==2.0.2
 wit==4.2.0
+duckling==1.7.1
