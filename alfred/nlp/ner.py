@@ -11,7 +11,7 @@ class NER(metaclass=Singleton):
 
 
     def getNERDuckling(self, text):
-        entities = self.ducklingInstance.parse(text)
+        entities = self.ducklingInstance.parse_time(text)
         print(entities)
         return entities
 

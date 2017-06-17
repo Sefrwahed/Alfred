@@ -14,12 +14,14 @@ from .nlp import Classifier
 from .modules import ModuleManager
 from .modules import ModuleInfo
 from .utils import WebBridge
+from .nlp.ner import NER
 
 
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.init_tray_icon()
+        self.nlp = NER()
 
         self.web_bridge = WebBridge()
         self.main_widget = MainWidget(self.web_bridge)
@@ -74,6 +76,10 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         module_info = ModuleInfo.find_by_id(Classifier().predict(text))
+        print("Duckling")
+        self.nlp.getNERDuckling(text)
+        print("Spacy")
+        print(self.nlp.getNERSpacy(text))
 
         if not module_info:
             return
