@@ -1,6 +1,4 @@
 import spacy
-
-from alfred import alfred_globals as ag
 from alfred.utils import Singleton
 from duckling import DucklingWrapper
 
@@ -10,15 +8,18 @@ class NER(metaclass=Singleton):
         self.ducklingInstance = DucklingWrapper()
 
 
-    def getNERDuckling(self, text):
-        entities = self.ducklingInstance.parse_time(text)
-        print(entities)
-        return entities
+    def getNERDuckling(self, text, dimType):
+        method_name = "parse_"+ dimType
+        entity = getattr(self.ducklingInstance, method_name)(text)
+        self.getNameEntitiesDuck(entity)
+        print(entity)
+        return entity
 
     def getNameEntitiesDuck(self, entityList):
         dim = entityList[0]["dim"]
         value = entityList[0]["value"]["value"]
 
+        print(dim, value)
         return {dim : value}
 
     def getNERSpacy(self, text):
