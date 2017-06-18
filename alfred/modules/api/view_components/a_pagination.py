@@ -3,11 +3,19 @@ from .a_unordered_list import AUnorderedList
 from .a_component import AComponent
 from .a_href import AHref
 from .a_icon import AIcon
+from .a_script import AScript
 
 class APagination(AComponent):
 	def __init__(self, attributes=[],*args,**kwargs):
 		super().__init__(*args, **kwargs)
 		self.attrs["class"] = "pagination"
+
+		#a = AHref(url="#!", link = AScript(src="/home/mahmoudrizk/Desktop/my_desktop/Alfred/alfred/resources/js/a_pagination.js") )
+		#li = AList(class_attribute="waves-effect")
+		#li.add_to_content(a)
+		#self.add_to_content(AScript(src="/home/mahmoudrizk/Desktop/my_desktop/Alfred/alfred/resources/js/a_pagination.js"))
+
+
 		li = AList(class_attribute="disabled")
 		a = AHref(url="#!", link="")
 		i = AIcon(icon = "chevron_left")
