@@ -1,38 +1,20 @@
-import spacy
 from alfred.utils import Singleton
-from duckling import DucklingWrapper
+from abc import abstractmethod
+
 
 class NER(metaclass=Singleton):
-    def __init__(self):
-        self.spacyNlp = spacy.load('en', parser=None)
-        self.ducklingInstance = DucklingWrapper()
+    def __init__(self, entities_list, text):
+        pass
 
+    @abstractmethod
+    def getNER(self, entities_types_list, text):
+        """
+        Get the entities extracted either from spacy or duckling
+        """
 
-    def getNERDuckling(self, text, dimType):
-        method_name = "parse_"+ dimType
-        entity = getattr(self.ducklingInstance, method_name)(text)
-        self.getNameEntitiesDuck(entity)
-        print(entity)
-        return entity
-
-    def getNameEntitiesDuck(self, entityList):
-        dim = entityList[0]["dim"]
-        value = entityList[0]["value"]["value"]
-
-        print(dim, value)
-        return {dim : value}
-
-    def getNERSpacy(self, text):
-        doc = self.spacyNlp(text)
-        entities = {}
-        for ent in doc.ents:
-            if ent.label_ in entities:
-                entities[ent.label_].append(ent)
-            else:
-                entities[ent.label_] = [ent]
-        return entities
-
+    @abstractmethod
     def getNameEntities(self, entities_types_list, text):
-        entities = self.getNERSpacy(text)
-        return {entities_type: entities[entities_type]
-                for entities_type in entities_types_list}
+        """
+        parse the entities extracted either from spacy or duckling and return it
+        """
+
