@@ -77,7 +77,7 @@ class Alfred(QMainWindow):
     def process_text(self, text):
         module_info = ModuleInfo.find_by_id(Classifier().predict(text))
         print("Duckling")
-        self.nlp.getNERDuckling(text)
+        self.nlp.getNERDuckling(text, "time")
         print("Spacy")
         print(self.nlp.getNERSpacy(text))
 
