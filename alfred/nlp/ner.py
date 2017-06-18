@@ -15,6 +15,12 @@ class NER(metaclass=Singleton):
         print(entities)
         return entities
 
+    def getNameEntitiesDuck(self, entityList):
+        dim = entityList[0]["dim"]
+        value = entityList[0]["value"]["value"]
+
+        return {dim : value}
+
     def getNERSpacy(self, text):
         doc = self.spacyNlp(text)
         entities = {}
