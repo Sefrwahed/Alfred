@@ -1,20 +1,17 @@
 # Python builtins imports
 import sys
 
-# PyQt imports
 from PyQt5.QtCore import QCoreApplication, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
-# Local imports
-from . import data_rc
+from alfred.nlp.ner_parsers.ner import NER
+from .modules import ModuleInfo
+from .modules import ModuleManager
+from .nlp import Classifier
+from .utils import WebBridge
 from .views import MainWidget
 from .views import MainWindow
-from .nlp import Classifier
-from .modules import ModuleManager
-from .modules import ModuleInfo
-from .utils import WebBridge
-from .nlp.ner import NER
 
 
 class Alfred(QMainWindow):
