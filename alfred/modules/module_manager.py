@@ -7,7 +7,6 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 # Local imports
 from alfred import alfred_globals as ag
-from alfred.nlp import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
 from alfred.logger import Logger
