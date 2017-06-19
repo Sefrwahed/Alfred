@@ -7,7 +7,7 @@ from alfred.utils import Singleton
 class Duckling(NER, metaclass=Singleton):
 
     def __init__(self, entities_types):
-        NER.__init__(entities_types)
+        NER.__init__(self,entities_types)
         self.ducklingInstance = DucklingWrapper()
 
     def getNER(self, text):

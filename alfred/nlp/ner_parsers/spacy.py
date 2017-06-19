@@ -1,13 +1,14 @@
 import spacy
 
 from alfred.nlp.ner_parsers.ner import NER
+from alfred.nlp.entity_type import SpacyEnitites
 from alfred.utils import Singleton
 
 
 class Spacy(NER, metaclass=Singleton):
 
-    def __init__(self, entities_types):
-        NER.__init__(entities_types)
+    def __init__(self, entities_types = SpacyEnitites):
+        NER.__init__(self,entities_types)
         self.spacyNlp = spacy.load('en', parser=None)
 
     def getNER(self, text):
@@ -24,3 +25,12 @@ class Spacy(NER, metaclass=Singleton):
         entities = self.getNER(text)
         return {entities_type: entities[entities_type]
                 for entities_type in self.entities_types_list}
+
+    def getAnnotatedText(self,text):
+        entities = self.getNER(text)
+        for type in entities:
+            print(entities[type])
+            text = text.replace(str(entities[type][0]), type)
+            print(text)
+        print("final text: ", text)
+        return text

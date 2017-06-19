@@ -5,7 +5,7 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
-from alfred.nlp.ner_parsers.ner import NER
+import alfred.nlp.ner_parsers as parsers
 from .modules import ModuleInfo
 from .modules import ModuleManager
 from .nlp import Classifier
@@ -18,7 +18,6 @@ class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.init_tray_icon()
-        self.nlp = NER()
 
         self.web_bridge = WebBridge()
         self.main_widget = MainWidget(self.web_bridge)
@@ -72,11 +71,8 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        module_info = ModuleInfo.find_by_id(Classifier().predict(text))
-        print("Duckling")
-        self.nlp.getNERDuckling(text, "time")
-        print("Spacy")
-        print(self.nlp.getNERSpacy(text))
+        preprocessed_text = self.preprocess_text(text)
+        module_info = ModuleInfo.find_by_id(Classifier().predict(preprocessed_text))
 
         if not module_info:
             return
@@ -100,3 +96,9 @@ class Alfred(QMainWindow):
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
         self.curr_module.start()
+
+    def preprocess_text(self, text):
+        #normalizarion
+        #NER
+        return parsers.Spacy().getAnnotatedText(text)
+
