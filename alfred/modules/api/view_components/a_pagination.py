@@ -8,15 +8,10 @@ from .a_script import AScript
 class APagination(AComponent):
 	def __init__(self, attributes=[],*args,**kwargs):
 		super().__init__(*args, **kwargs)
+
 		self.attrs["class"] = "pagination"
-
-		#a = AHref(url="#!", link = AScript(src="/home/mahmoudrizk/Desktop/my_desktop/Alfred/alfred/resources/js/a_pagination.js") )
-		#li = AList(class_attribute="waves-effect")
-		#li.add_to_content(a)
-		#self.add_to_content(AScript(src="/home/mahmoudrizk/Desktop/my_desktop/Alfred/alfred/resources/js/a_pagination.js"))
-
-
-		li = AList(class_attribute="disabled")
+		self.attrs["child"] = str(len(attributes))
+		li = AList(html_attributes={"class":"waves-effect" , "id":"0"})
 		a = AHref(url="#!", link="")
 		i = AIcon(icon = "chevron_left")
 		i.attrs['class'] = "material-icons"
@@ -24,18 +19,19 @@ class APagination(AComponent):
 		li.add_to_content(a)
 		self.add_to_content(li)
 
-		counter = 0
+		counter = 1
 		for attribute in attributes:
 			a = AHref(url="#!", link=attribute)
-			if counter == 0:
-				li = AList(class_attribute="active")
-				counter = 1
+			if counter == 1:
+				li = AList(html_attributes={"class":"waves-effect", "id":str(counter)})
+				counter += 1
 			else:
-				li = AList(class_attribute="waves-effect")
+				li = AList(html_attributes={"class":"waves-effect", "id":str(counter)})
+				counter += 1
 			li.add_to_content(a)
 			self.add_to_content(li)
 
-		li = AList(class_attribute="waves-effect")
+		li = AList(html_attributes={"class":"waves-effect", "id":str(-1)})
 		a = AHref(url="#!", link="")
 		i = AIcon(icon = "chevron_right")
 		i.attrs['class'] = "material-icons"
