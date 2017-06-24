@@ -49,6 +49,6 @@ class MainWidget(QDialog, Ui_Dialog):
 
     @pyqtSlot(str, str)
     def append_content(self, parent_dom_id, element_html):
-        js = "jQuery('{}').appendTo('#{}').hide().fadeIn((d);".format("".join(element_html.splitlines()), parent_dom_id)
+        js = "jQuery('{}').prependTo('#{}').hide().fadeIn();".format("".join(element_html.splitlines()), parent_dom_id)
         # print(js)
         self.webView.page().runJavaScript(js)

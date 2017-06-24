@@ -101,8 +101,8 @@ class ModuleManager(QObject):
         Classifier().train()
         self.installation_finished.emit(int(self.mod_data['id']))
 
-    def uninstall(self, mod_id):
-        info = ModuleInfo.find_by_id(mod_id)
+    def uninstall(self, mod_data):
+        info = ModuleInfo.find_by_id(mod_data["id"])
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
@@ -115,7 +115,7 @@ class ModuleManager(QObject):
             print(ex)
 
         info.destroy()
-        self.uninstallation_finished.emit(mod_id)
+        self.uninstallation_finished.emit(mod_data["id"])
         Logger().info("Unistalled module successfully")
         Classifier().train()
 
