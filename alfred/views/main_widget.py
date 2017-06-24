@@ -40,3 +40,15 @@ class MainWidget(QDialog, Ui_Dialog):
         html = temp.render(componenets=components)
         # print(html)
         self.webView.page().setHtml(html)
+
+    @pyqtSlot(str)
+    def remove_component(self, dom_id):
+        js = "jQuery('#{}').fadeOut(function(){{ jQuery(this).remove() }});".format(dom_id)
+        # print(js)
+        self.webView.page().runJavaScript(js)
+
+    @pyqtSlot(str, str)
+    def append_content(self, parent_dom_id, element_html):
+        js = "jQuery('{}').prependTo('#{}').hide().fadeIn();".format("".join(element_html.splitlines()), parent_dom_id)
+        # print(js)
+        self.webView.page().runJavaScript(js)

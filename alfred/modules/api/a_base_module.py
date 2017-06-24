@@ -10,6 +10,8 @@ import alfred.modules.api.a_module_globals as amg
 
 class ABaseModule(QThread):
     signal_view_changed = pyqtSignal(list)
+    signal_append_content = pyqtSignal(str, str)
+    signal_remove_component = pyqtSignal(str)
 
     def __init__(self, module_info, entities=''):
         QThread.__init__(self)
@@ -62,6 +64,21 @@ class ABaseModule(QThread):
 
     def populate_view(self):
         self.signal_view_changed.emit(self.components)
+
+    def remove_component_by_id(self, component_id):
+        self.signal_remove_component.emit(component_id)
+
+    def remove_component(self, component):
+        if hasattr(component, "root_component"):
+            self.remove_component_by_id(component.root_component.dom_id)
+        else:
+            self.remove_component_by_id(component.dom_id)
+
+    def append_to(self, parent_component, child_component):
+        if hasattr(parent_component, "root_component"):
+            self.signal_append_content.emit(parent_component.root_component.dom_id, str(child_component))
+        else:
+            self.signal_append_content.emit(parent_component.dom_id, str(child_component))
 
     @pyqtSlot(str, str, dict)
     def event_triggered(self, element_id, event, attrs):

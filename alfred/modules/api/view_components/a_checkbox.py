@@ -5,11 +5,15 @@ from .a_paragraph import AParagraph
 
 
 class ACheckbox(ACompositeComponent):
-    def __init__(self, label_text, state, id, *args, **kwargs):
+    def __init__(self, label_text, state, *args, **kwargs):
         input = AInput(type="checkbox")
-        input.attrs["id"] = "item_{}".format(id)
-        input.attrs["data-id"] = id
+
+        if kwargs.get("id", "") != "":
+            input.attrs["id"] = kwargs["id"]
+
+        self.dom_id = input.attrs["id"]
+
         if state:
             input.attrs["checked"] = "checked"
-        text = ALabel(label_text, **{"for": "item_{}".format(id)})
+        text = ALabel(label_text, **{"for": input.attrs["id"]})
         self.root_component = AParagraph(input, text, *args)
