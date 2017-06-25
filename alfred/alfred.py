@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
 import alfred.nlp.ner_parsers as parsers
+from alfred.nlp import parser
 from .modules import ModuleInfo
 from .modules import ModuleManager
 from .nlp import Classifier
@@ -72,6 +73,7 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         preprocessed_text = self.preprocess_text(text)
+
         module_info = ModuleInfo.find_by_id(Classifier().predict(preprocessed_text))
 
         if not module_info:
@@ -92,6 +94,11 @@ class Alfred(QMainWindow):
             module, module_info.class_name()
         )(module_info)
 
+        needed_entities = module_info.entities
+        entities_list = parser(needed_entities).parse(text)
+        print(entities_list)
+
+        self.curr_module.mod
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
