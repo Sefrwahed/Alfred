@@ -18,6 +18,7 @@ class Parser:
 
     def parse(self, text):
         self.parse_list(text)
+        return self.parsed_entities
 
     def parse_list(self, text):
         spacy_entities_list = []
