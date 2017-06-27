@@ -12,6 +12,7 @@ from . import RequestThread
 from .module_info import ModuleInfo
 from alfred.logger import Logger
 
+import tarfile
 
 class ModuleManager(QObject):
     _instance = None
@@ -89,10 +90,14 @@ class ModuleManager(QObject):
             if os.path.exists(dir):
                 shutil.rmtree(dir)
             os.makedirs(dir)
-
-        module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
-        module_zip.extractall(install_dir)
-        module_zip.close()
+        try:
+            module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
+            module_zip.extractall(install_dir)
+            module_zip.close()
+        except:
+            module_tar = tarfile.open(self.module_zip_path)
+            module_tar.extractall(install_dir)
+            module_tar.close()
 
         os.remove(self.module_zip_path)
 
