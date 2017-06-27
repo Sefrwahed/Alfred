@@ -1,6 +1,7 @@
 import os
 import shutil
 import zipfile
+import numpy as np
 
 # Qt imports
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
@@ -89,13 +90,13 @@ class ModuleManager(QObject):
                 shutil.rmtree(dir)
             os.makedirs(dir)
 
-        module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
-        module_zip.extractall(install_dir)
-        module_zip.close()
+        # module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
+        # module_zip.extractall(install_dir)
+        # module_zip.close()
 
         os.remove(self.module_zip_path)
 
-        info = ModuleInfo(name, source, username, version)
+        info = ModuleInfo(name, source, username, version, np.array(["TIME"]))
         info.create()
         Classifier().train()
         self.installation_finished.emit(int(self.mod_data['id']))

@@ -1,7 +1,10 @@
+import uuid
+
 import os
 import re
 import numpy as np
 from sqlalchemy import Column, Integer, String
+from sqlalchemy import Text
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from alfred import alfred_globals as ag
@@ -16,15 +19,17 @@ class ModuleInfo(DBManager().DBModelBase):
     source = Column(String(256), nullable=False)
     user = Column(String(256), nullable=False)
     version = Column(String(256), nullable=False)
-    entities = Column(ARRAY(String(256)), nullable=True)
+    entities = Column(Text(length=36), default=lambda: str(uuid.uuid4()))
+
 
     def __init__(self, name, source, user, version, entities):
-        DBManager().refresh_tables()
         self.name = name
         self.source = source
         self.user = user
         self.version = version
         self.entities = np.asarray(["time"])
+        DBManager().refresh_tables()
+
 
     def root(self):
         return os.path.join(ag.modules_folder_path,
@@ -63,7 +68,7 @@ class ModuleInfo(DBManager().DBModelBase):
 
     @classmethod
     def get_needed_entities(cls, id):
-        return DBManager().session.query.with_entities(ModuleInfo.entities).get(int(id))
+        return DBManager().session.query(ModuleInfo.entities).get(int(id))
 
 
     @classmethod
