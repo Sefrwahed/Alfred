@@ -90,14 +90,20 @@ class ModuleManager(QObject):
             if os.path.exists(dir):
                 shutil.rmtree(dir)
             os.makedirs(dir)
-        try:
-            module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
-            module_zip.extractall(install_dir)
-            module_zip.close()
-        except:
-            module_tar = tarfile.open(self.module_zip_path)
-            module_tar.extractall(install_dir)
-            module_tar.close()
+
+        path = self.module_zip_path
+
+        if zipfile.is_zipfile(path):
+            module_file = zipfile.ZipFile(path, 'r')
+        elif tarfile.is_tarfile(path):
+            module_file = tarfile.open(path)
+        else:
+            msg = '{path} is not a valid zip or tar file'.foramt(path=path)
+            Logger().err(msg)
+            raise IOError(msg)
+
+        module_file.extractall(install_dir)
+        module_file.close()
 
         os.remove(self.module_zip_path)
 
