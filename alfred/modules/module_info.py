@@ -22,12 +22,12 @@ class ModuleInfo(DBManager().DBModelBase):
     entities = Column(Text(length=36), default=lambda: str(uuid.uuid4()))
 
 
-    def __init__(self, name, source, user, version, entities):
+    def __init__(self, name, source, user, version, entities = np.asarray(["time"])):
         self.name = name
         self.source = source
         self.user = user
         self.version = version
-        self.entities = np.asarray(["time"])
+        self.entities = entities
         DBManager().refresh_tables()
 
 

@@ -8,10 +8,12 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 # Local imports
 from alfred import alfred_globals as ag
+# from alfred.nlp import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
 from alfred.logger import Logger
 
+import tarfile
 
 class ModuleManager(QObject):
     _instance = None
@@ -90,19 +92,29 @@ class ModuleManager(QObject):
                 shutil.rmtree(dir)
             os.makedirs(dir)
 
-        # module_zip = zipfile.ZipFile(self.module_zip_path, 'r')
-        # module_zip.extractall(install_dir)
-        # module_zip.close()
+        path = self.module_zip_path
+
+        if zipfile.is_zipfile(path):
+            module_file = zipfile.ZipFile(path, 'r')
+        elif tarfile.is_tarfile(path):
+            module_file = tarfile.open(path)
+        else:
+            msg = '{path} is not a valid zip or tar file'.foramt(path=path)
+            Logger().err(msg)
+            raise IOError(msg)
+
+        module_file.extractall(install_dir)
+        module_file.close()
 
         os.remove(self.module_zip_path)
 
-        info = ModuleInfo(name, source, username, version, np.array(["TIME"]))
+        info = ModuleInfo(name, source, username, version)
         info.create()
         Classifier().train()
         self.installation_finished.emit(int(self.mod_data['id']))
 
-    def uninstall(self, mod_id):
-        info = ModuleInfo.find_by_id(mod_id)
+    def uninstall(self, mod_data):
+        info = ModuleInfo.find_by_id(mod_data["id"])
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
@@ -115,7 +127,7 @@ class ModuleManager(QObject):
             print(ex)
 
         info.destroy()
-        self.uninstallation_finished.emit(mod_id)
+        self.uninstallation_finished.emit(mod_data["id"])
         Logger().info("Unistalled module successfully")
         Classifier().train()
 
