@@ -5,7 +5,6 @@ import re
 import numpy as np
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import Text
-from sqlalchemy.dialects.postgresql import ARRAY
 
 from alfred import alfred_globals as ag
 from alfred.modules.db_manager import DBManager
@@ -29,6 +28,7 @@ class ModuleInfo(DBManager().DBModelBase):
         self.version = version
         self.entities = entities
         DBManager().refresh_tables()
+
 
 
     def root(self):
