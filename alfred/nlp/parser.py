@@ -25,11 +25,14 @@ class Parser:
         duckling_entities_list = []
 
         for entity in self.entities_list:
+            print("entity is {}".format(entity))
             if entity in self.duckling_list:
                 duckling_entities_list.append(entity)
             elif entity in self.spacy_list:
                 spacy_entities_list.append(entity)
 
+        print("module spacy list is {}".format(spacy_entities_list))
+        print("module duckling list is {}".format(duckling_entities_list))
         if spacy_entities_list:
             self.NERParser_list.append(parsers.Spacy(spacy_entities_list))
         if duckling_entities_list:
