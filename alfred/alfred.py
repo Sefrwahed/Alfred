@@ -13,6 +13,7 @@ from .nlp import Classifier
 from .utils import WebBridge
 from .views import MainWidget
 from .views import MainWindow
+from alfred.logger import Logger
 
 
 class Alfred(QMainWindow):
@@ -73,8 +74,10 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         preprocessed_text = self.preprocess_text(text)
+        print(preprocessed_text)
 
-        module_info = ModuleInfo.find_by_id(Classifier().predict(preprocessed_text))
+        module_id = Classifier().predict(preprocessed_text)
+        module_info = ModuleInfo.find_by_id(module_id)
 
         if not module_info:
             return
@@ -94,13 +97,14 @@ class Alfred(QMainWindow):
             module, module_info.class_name()
         )(module_info)
 
-        needed_entities = module_info.entities
+        needed_entities = ModuleInfo.get_needed_entities(module_id)
+        Logger().info("Needed Entities are {}".format(needed_entities))
         entities_list = Parser(needed_entities).parse(text)
-        print(entities_list)
+        Logger().info("Extracted Entities are {}".format(entities_list))
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
-        self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
-        self.curr_module.signal_append_content.connect(self.main_widget.append_content)
+        # self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
+        # self.curr_module.signal_append_content.connect(self.main_widget.append_content)
 
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
