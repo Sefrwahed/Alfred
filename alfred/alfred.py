@@ -63,7 +63,7 @@ class Alfred(QMainWindow):
 
     def tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.show_main_widget()
+             self.show_main_widget()
 
     def show_main_widget(self):
         self.main_widget.showFullScreen()
@@ -74,7 +74,7 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         preprocessed_text = self.preprocess_text(text)
-        print(preprocessed_text)
+        Logger().info("Pre Processed Text : {}".format(preprocessed_text))
 
         module_id = Classifier().predict(preprocessed_text)
         module_info = ModuleInfo.find_by_id(module_id)
@@ -114,4 +114,3 @@ class Alfred(QMainWindow):
         #normalizarion
         #NER
         return parsers.Spacy().getAnnotatedText(text)
-
