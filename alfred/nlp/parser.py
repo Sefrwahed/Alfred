@@ -34,12 +34,22 @@ class Parser(metaclass=Singleton):
         Logger().info("module duckling list is {}".format(duckling_entities_list))
 
         if duckling_entities_list:
+<<<<<<< HEAD
             self.nerObjects["Duckling"].resetEntitiesTypes(duckling_entities_list)
             self.NERParser_list.append(self.nerObjects["Duckling"])
 
         if spacy_entities_list:
             self.nerObjects["Spacy"].resetEntitiesTypes(spacy_entities_list)
             self.NERParser_list.append(self.nerObjects["Spacy"])
+=======
+            duckling_parser = parsers.Duckling(duckling_entities_list)
+            self.NERParser_list.append(duckling_parser)
+
+        if spacy_entities_list:
+            spacy_parser = parsers.Spacy(spacy_entities_list)
+            self.NERParser_list.append(spacy_parser)
+
+>>>>>>> ed61e1cbdc96153d3438bb4e5709c79431fd49ad
 
         if self.NERParser_list:
             for parser in self.NERParser_list:

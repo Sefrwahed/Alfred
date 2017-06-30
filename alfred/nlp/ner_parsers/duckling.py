@@ -11,6 +11,10 @@ class Duckling(NER):
     def resetEntitiesTypes(self, entities_types):
         self.entities_types_list = entities_types
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ed61e1cbdc96153d3438bb4e5709c79431fd49ad
     def getNER(self, text):
         pass
 

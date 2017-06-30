@@ -74,7 +74,11 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         preprocessed_text = self.preprocess_text(text)
+<<<<<<< HEAD
         Logger().info("PreProcessed Text is : {}".format(preprocessed_text))
+=======
+        print(preprocessed_text)
+>>>>>>> ed61e1cbdc96153d3438bb4e5709c79431fd49ad
 
         module_id = Classifier().predict(preprocessed_text)
         module_info = ModuleInfo.find_by_id(module_id)

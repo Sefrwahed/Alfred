@@ -111,7 +111,13 @@ class ModuleManager(QObject):
         os.remove(self.module_zip_path)
 
         info = ModuleInfo(name, source, username, version)
+<<<<<<< HEAD
         self.store_entities(info, ['time'])
+=======
+        info.entities = [Entity(entity_name='time' )]
+        info.create()
+
+>>>>>>> ed61e1cbdc96153d3438bb4e5709c79431fd49ad
 
         from alfred.nlp import Classifier
         Classifier().train()

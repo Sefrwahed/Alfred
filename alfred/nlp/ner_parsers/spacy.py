@@ -6,7 +6,11 @@ from alfred.nlp.entity_type import SpacyEnitites
 
 class Spacy(NER):
 
+<<<<<<< HEAD
     def __init__(self, entities_types=SpacyEnitites):
+=======
+    def __init__(self, entities_types = SpacyEnitites):
+>>>>>>> ed61e1cbdc96153d3438bb4e5709c79431fd49ad
         self.entities_types_list = entities_types
         self.spacyNlp = spacy.load('en', parser=None)
 
