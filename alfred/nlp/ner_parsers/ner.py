@@ -1,14 +1,13 @@
-from alfred.utils import Singleton
+from abc import ABCMeta
 from abc import abstractmethod
 
 
-class NER(metaclass=Singleton):
-    def __init__(self, entities_types):
-        self.entities_types_list = entities_types
-
+class NER(metaclass=ABCMeta):
+    @abstractmethod
     def resetEntitiesTypes(self, entities_types):
+        """
         self.entities_types_list = entities_types
-
+        """
 
     @abstractmethod
     def getNER(self, text):

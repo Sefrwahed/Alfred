@@ -11,6 +11,7 @@ from alfred import alfred_globals as ag
 # from alfred.nlp.classifier import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
+from .module_info import Entity
 from alfred.logger import Logger
 
 import tarfile
@@ -109,7 +110,10 @@ class ModuleManager(QObject):
         os.remove(self.module_zip_path)
 
         info = ModuleInfo(name, source, username, version)
+        info.entities = [Entity(entity_name='time' )]
         info.create()
+
+
         from alfred.nlp import Classifier
         Classifier().train()
         self.installation_finished.emit(int(self.mod_data['id']))
@@ -125,7 +129,7 @@ class ModuleManager(QObject):
         try:
             shutil.rmtree(module_folder_path)
         except Exception as ex:
-            print(ex)
+            Logger().err(ex)
 
         info.destroy()
         self.uninstallation_finished.emit(mod_data["id"])

@@ -6,6 +6,7 @@ import numpy as np
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import ForeignKey
 from sqlalchemy import Text
+from sqlalchemy.orm import relationship
 
 from alfred import alfred_globals as ag
 from alfred.modules.db_manager import DBManager
@@ -19,15 +20,12 @@ class ModuleInfo(DBManager().DBModelBase):
     source = Column(String(256), nullable=False)
     user = Column(String(256), nullable=False)
     version = Column(String(256), nullable=False)
-    # entities = Column(Text(length=36), default=lambda: str(uuid.uuid4()))
 
-
-    def __init__(self, name, source, user, version, entities = ["time", "DATE"]):
+    def __init__(self, name, source, user, version):
         self.name = name
         self.source = source
         self.user = user
         self.version = version
-        self.entities = entities
         DBManager().refresh_tables()
 
 
@@ -55,9 +53,7 @@ class ModuleInfo(DBManager().DBModelBase):
     def create(self):
         DBManager().session.add(self)
         DBManager().session.commit()
-        for entity in self.entities:
-            Entity(id, entity)
-        DBManager().refresh_tables()
+
 
     def destroy(self):
         DBManager().session.query(ModuleInfo).filter(
@@ -71,9 +67,6 @@ class ModuleInfo(DBManager().DBModelBase):
 
     @classmethod
     def get_needed_entities(cls, mod_id):
-        # res = DBManager().session.query(ModuleInfo).get(int(id))
-        # print(type(str(res.entities)))
-        # return res.entities.decode("utf-8")
         res = DBManager().session.query(ModuleInfo, Entity).filter(ModuleInfo.id == mod_id)
         return res
 
@@ -85,18 +78,20 @@ class ModuleInfo(DBManager().DBModelBase):
 class Entity(DBManager().DBModelBase):
     __tablename__ = 'entity'
 
-    entity_id = Column(Integer, primary_key=True, nullable=False)
-    module_id = Column(Integer, ForeignKey(ModuleInfo.id), primary_key=True, nullable=False)
+    entity_id = Column(Integer, primary_key=True,autoincrement=True)
+    module_id = Column(Integer, ForeignKey(ModuleInfo.id), nullable=False)
     entity_name = Column(String(256), nullable=False)
+    module_info = relationship("ModuleInfo", order_by=entity_id, back_populates="entities")
 
+    DBManager().refresh_tables()
 
-    def __init__(self, module_id, entity):
-        self.module_id = module_id
-        self.entity = entity
+    def __init__(self, entity_name):
+        self.entity_name = entity_name
+
 
     def create(self):
         DBManager().session.add(self)
         DBManager().session.commit()
 
-
+ModuleInfo.entities = relationship("Entity", back_populates = "module_info")
 DBManager().refresh_tables()

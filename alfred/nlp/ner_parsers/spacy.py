@@ -5,11 +5,14 @@ from alfred.nlp.entity_type import SpacyEnitites
 from alfred.utils import Singleton
 
 
-class Spacy(NER, metaclass=Singleton):
+class Spacy(NER):
 
     def __init__(self, entities_types = SpacyEnitites):
-        NER.__init__(self,entities_types)
+        self.entities_types_list = entities_types
         self.spacyNlp = spacy.load('en', parser=None)
+
+    def resetEntitiesTypes(self, entities_types):
+        self.entities_types_list = entities_types
 
     def getNER(self, text):
         doc = self.spacyNlp(text)
