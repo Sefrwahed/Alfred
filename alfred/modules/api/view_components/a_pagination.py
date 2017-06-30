@@ -11,7 +11,8 @@ class APagination(AComponent):
 
 		self.attrs["class"] = "pagination"
 		self.attrs["child"] = str(len(attributes))
-		li = AList(html_attributes={"class":"waves-effect" , "id":"0"})
+		kwargs = {"class":"waves-effect" , "id":"0"}
+		li = AList(**kwargs)
 		a = AHref(url="#!", link="")
 		i = AIcon(icon = "chevron_left")
 		i.attrs['class'] = "material-icons"
@@ -23,15 +24,18 @@ class APagination(AComponent):
 		for attribute in attributes:
 			a = AHref(url="#!", link=attribute)
 			if counter == 1:
-				li = AList(html_attributes={"class":"waves-effect", "id":str(counter)})
+				kwargs = {"class":"waves-effect", "id":str(counter)}
+				li = AList(**kwargs)
 				counter += 1
 			else:
-				li = AList(html_attributes={"class":"waves-effect", "id":str(counter)})
+				kwargs = {"class":"waves-effect", "id":str(counter)}
+				li = AList(**kwargs)
 				counter += 1
 			li.add_to_content(a)
 			self.add_to_content(li)
 
-		li = AList(html_attributes={"class":"waves-effect", "id":str(-1)})
+		kwargs = {"class":"waves-effect", "id":str(-1)}
+		li = AList(**kwargs)
 		a = AHref(url="#!", link="")
 		i = AIcon(icon = "chevron_right")
 		i.attrs['class'] = "material-icons"
