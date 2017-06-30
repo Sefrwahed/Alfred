@@ -1,7 +1,7 @@
 from .a_component import AComponent
 
 
-class ASpan(AComponent):
+class ADiv(AComponent):
 
     def tagname(self):
-        return "span"
+        return "div"

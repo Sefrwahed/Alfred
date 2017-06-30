@@ -8,7 +8,7 @@ from .a_label import ALabel
 class ATextField(ACompositeComponent):
     def __init__(self, name, label_text, icon_prefix=""):
         icon = ""
-        input = AInput(type="text", name=name, id=name)
+        input = AInput(type="text", name=name, id=name, **{"class": "white-text"})
         label = ALabel(label_text, **{"for": name})
         if icon_prefix != "":
             icon = AIcon(icon_prefix, **{"class": "prefix"})
