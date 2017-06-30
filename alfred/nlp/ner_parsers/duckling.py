@@ -1,7 +1,5 @@
 from duckling import DucklingWrapper
-
 from alfred.nlp.ner_parsers.ner import NER
-from alfred.utils import Singleton
 
 
 class Duckling(NER):
