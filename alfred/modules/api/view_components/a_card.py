@@ -5,7 +5,7 @@ from .a_image import AImage
 
 
 class ACard(ACompositeComponent):
-    def __init__(self, title, image_url=None, title_on_image=False, size="", color="", orientation="", *args):
+    def __init__(self, title,*args, image_url=None, title_on_image=False, size="", color="", orientation=""):
         self.root_component = ADiv()
         self.root_component.attrs["class"] = "card {} {} {}".format(size, color, orientation)
 
