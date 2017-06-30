@@ -1,7 +1,5 @@
 from duckling import DucklingWrapper
-
 from alfred.nlp.ner_parsers.ner import NER
-from alfred.utils import Singleton
 
 
 class Duckling(NER):
@@ -12,7 +10,6 @@ class Duckling(NER):
 
     def resetEntitiesTypes(self, entities_types):
         self.entities_types_list = entities_types
-
 
     def getNER(self, text):
         pass

@@ -82,6 +82,7 @@ class ModuleManager(QObject):
         name = self.mod_data['name']
         username = self.mod_data['user']['username']
         version = self.mod_data['latest_version']['number']
+        # needed_entities = self.mod_data['entities']
 
         install_dir = os.path.join(ag.user_folder_path, 'modules',
                                    source, username, name)
@@ -110,9 +111,7 @@ class ModuleManager(QObject):
         os.remove(self.module_zip_path)
 
         info = ModuleInfo(name, source, username, version)
-        info.entities = [Entity(entity_name='time' )]
-        info.create()
-
+        self.store_entities(info, ['time'])
 
         from alfred.nlp import Classifier
         Classifier().train()
@@ -140,3 +139,10 @@ class ModuleManager(QObject):
     def update(self, mod_data):
         self.uninstall(mod_data)
         self.install(mod_data)
+
+    def store_entities(self, info, entities):
+        entities_records = []
+        for entity in entities:
+            entities_records.append(Entity(entity_name=entity))
+        info.entities = entities_records
+        info.create()
