@@ -97,8 +97,7 @@ class Alfred(QMainWindow):
             module, module_info.class_name()
         )(module_info)
 
-        needed_entities = ModuleInfo.get_needed_entities(module_id)
-        Logger().info("Needed Entities are {}".format(needed_entities))
+        needed_entities = module_info.entities
         entities_list = Parser(needed_entities).parse(text)
         Logger().info("Extracted Entities are {}".format(entities_list))
 
