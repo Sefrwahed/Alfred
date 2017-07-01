@@ -16,8 +16,6 @@ from .views import MainWindow
 from alfred.logger import Logger
 from alfred.nlp.entity_type import EntityType
 
-TESTING_LIST_OF_ENTITIES = ['time', EntityType.Food.value]
-print(TESTING_LIST_OF_ENTITIES)
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -94,20 +92,22 @@ class Alfred(QMainWindow):
 
         if self.curr_module is not None:
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
+            self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
         self.curr_module = getattr(
             module, module_info.class_name()
         )(module_info)
 
-        # self.modules_mgr.store_entities(module_info, TESTING_LIST_OF_ENTITIES)
-        needed_entities = module_info.entities
+        needed_entities = module_info.needed_entities()
+        print(needed_entities)
 
         entities_list = Parser(needed_entities).parse(text)
         Logger().info("Extracted Entities are {}".format(entities_list))
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
-        # self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
-        # self.curr_module.signal_append_content.connect(self.main_widget.append_content)
+
+        self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
+        self.curr_module.signal_append_content.connect(self.main_widget.append_content)
 
         self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)

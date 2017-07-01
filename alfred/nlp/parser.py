@@ -27,8 +27,7 @@ class Parser(metaclass=Singleton):
         spacy_entities_list = []
         duckling_entities_list = []
 
-        for entity_item in self.entities_list:
-            entity_name = entity_item.entity_name
+        for entity_name in self.entities_list:
             if entity_name in self.duckling_list:
                 duckling_entities_list.append(entity_name)
             elif entity_name in self.spacy_list:

@@ -3,18 +3,24 @@ from alfred import alfred_globals as ag
 
 
 class AComponent(ABC):
+    next_dom_id = 1
+
     def __new__(cls, *args, **kwargs):
         obj = super().__new__(cls)
         obj.attrs = {}
         return obj
 
     def __init__(self, *args, **kwargs):
-        if hasattr(self, "attrs"):
-            default_classes = self.attrs.get("class", "")
-            self.attrs = kwargs
-            self.attrs["class"] = self.attrs.get("class", "") + " {}".format(default_classes)
-        else:
-            self.attrs = kwargs
+        default_classes = self.attrs.get("class", "")
+        self.attrs = kwargs
+        self.attrs["class"] = self.attrs.get("class", "") + " {}".format(default_classes)
+
+        self.dom_id = self.attrs.get("id", "")
+        if self.dom_id == "":
+            self.dom_id = "{}_{}".format(self.tagname(), AComponent.next_dom_id)
+            AComponent.next_dom_id += 1
+            self.attrs["id"] = self.dom_id
+
         self.content = list(args)
 
     def set_content(self, *args):

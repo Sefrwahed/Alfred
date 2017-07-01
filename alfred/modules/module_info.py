@@ -1,5 +1,4 @@
-import uuid
-
+import json
 import os
 import re
 import numpy as np
@@ -39,6 +38,18 @@ class ModuleInfo(DBManager().DBModelBase):
                             self.package_name(),
                             'resources',
                             'training_sentences.json')
+
+    def needed_entities(self):
+        path =  os.path.join(self.root(),
+                            self.package_name(),
+                            'resources',
+                            'needed_entities.json')
+        with open(path) as entities_file:
+            entities_sent = json.load(entities_file)
+
+
+        return entities_sent
+
 
     def package_name(self) -> str:
         return re.sub(r'\W', '_', self.name)

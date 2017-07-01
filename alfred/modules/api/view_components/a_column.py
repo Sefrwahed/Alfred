@@ -1,9 +1,6 @@
-from .a_component import AComponent
+from .a_div import ADiv
 
-class AColumn(AComponent):
+class AColumn(ADiv):
     def __init__(self, size, *args, **kwargs):
         self.attrs["class"] = "col s{}".format(size)
         super().__init__(*args, **kwargs)
-
-    def tagname(self):
-        return "div"
