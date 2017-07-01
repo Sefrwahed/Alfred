@@ -9,10 +9,10 @@ class Spacy(NER):
         self.entities_types_list = entities_types
         self.spacyNlp = spacy.load('en', parser=None)
 
-    def resetEntitiesTypes(self, entities_types):
+    def set_entities_types(self, entities_types):
         self.entities_types_list = entities_types
 
-    def getNER(self, text):
+    def get_ner(self, text):
         doc = self.spacyNlp(text)
         entities = {}
         for ent in doc.ents:
@@ -22,13 +22,13 @@ class Spacy(NER):
                 entities[ent.label_] = [ent]
         return entities
 
-    def getNameEntities(self, text):
-        entities = self.getNER(text)
+    def get_name_entities(self, text):
+        entities = self.get_ner(text)
         return {entities_type: entities[entities_type]
                 for entities_type in self.entities_types_list}
 
     def getAnnotatedText(self, text):
-        entities = self.getNER(text)
+        entities = self.get_ner(text)
         for type in entities:
             text = text.replace(str(entities[type][0]), type)
         return text

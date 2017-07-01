@@ -8,13 +8,13 @@ class Duckling(NER):
         self.entities_types_list = entities_types
         self.ducklingInstance = DucklingWrapper()
 
-    def resetEntitiesTypes(self, entities_types):
+    def set_entities_types(self, entities_types):
         self.entities_types_list = entities_types
 
-    def getNER(self, text):
+    def get_ner(self, text):
         pass
 
-    def getNameEntities(self, text):
+    def get_name_entities(self, text):
         entities = []
         for dimType in self.entities_types_list:
             method_name = "parse_" + dimType

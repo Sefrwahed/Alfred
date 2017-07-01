@@ -28,7 +28,6 @@ class ModuleInfo(DBManager().DBModelBase):
         self.version = version
         DBManager().refresh_tables()
 
-
     def root(self):
         return os.path.join(ag.modules_folder_path,
                             self.source,
@@ -54,7 +53,6 @@ class ModuleInfo(DBManager().DBModelBase):
         DBManager().session.add(self)
         DBManager().session.commit()
 
-
     def destroy(self):
         DBManager().session.query(ModuleInfo).filter(
             ModuleInfo.id == self.id
@@ -62,8 +60,8 @@ class ModuleInfo(DBManager().DBModelBase):
         DBManager().session.commit()
 
     @classmethod
-    def find_by_id(cls, id):
-        return DBManager().session.query(ModuleInfo).get(int(id))
+    def find_by_id(cls, module_id):
+        return DBManager().session.query(ModuleInfo).get(int(module_id))
 
     @classmethod
     def get_needed_entities(cls, mod_id):
@@ -78,7 +76,7 @@ class ModuleInfo(DBManager().DBModelBase):
 class Entity(DBManager().DBModelBase):
     __tablename__ = 'entity'
 
-    entity_id = Column(Integer, primary_key=True,autoincrement=True)
+    entity_id = Column(Integer, primary_key=True, autoincrement=True)
     module_id = Column(Integer, ForeignKey(ModuleInfo.id), nullable=False)
     entity_name = Column(String(256), nullable=False)
     module_info = relationship("ModuleInfo", order_by=entity_id, back_populates="entities")
@@ -88,10 +86,9 @@ class Entity(DBManager().DBModelBase):
     def __init__(self, entity_name):
         self.entity_name = entity_name
 
-
     def create(self):
         DBManager().session.add(self)
         DBManager().session.commit()
 
-ModuleInfo.entities = relationship("Entity", back_populates = "module_info")
+ModuleInfo.entities = relationship("Entity", back_populates="module_info")
 DBManager().refresh_tables()

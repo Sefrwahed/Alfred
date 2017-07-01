@@ -1,7 +1,6 @@
 import os
 import shutil
 import zipfile
-import numpy as np
 
 # Qt imports
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
@@ -15,6 +14,7 @@ from .module_info import Entity
 from alfred.logger import Logger
 
 import tarfile
+
 
 class ModuleManager(QObject):
     _instance = None
@@ -89,10 +89,10 @@ class ModuleManager(QObject):
 
         Logger().info("Installing module {}".format(name))
         Logger().info("Installation dir is {}".format(install_dir))
-        for dir in [install_dir]:
-            if os.path.exists(dir):
-                shutil.rmtree(dir)
-            os.makedirs(dir)
+        for directory in [install_dir]:
+            if os.path.exists(directory):
+                shutil.rmtree(directory)
+            os.makedirs(directory)
 
         path = self.module_zip_path
 
