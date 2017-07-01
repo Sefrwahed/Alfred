@@ -15,6 +15,9 @@ class Parser(metaclass=Singleton):
         self.nerObjects = {"Duckling": parsers.Duckling([]), "Spacy": parsers.Spacy()}
 
     def parse(self, text):
+        self.parsed_entities.clear()
+        self.NERParser_list.clear()
+
         Logger().info("Parsing entities in progress..")
         self.parse_list(text)
         Logger().info("Finished parsing entities..")
@@ -31,8 +34,8 @@ class Parser(metaclass=Singleton):
             elif entity_name in self.spacy_list:
                 spacy_entities_list.append(entity_name)
 
-        Logger().info("module spacy list is {}".format(spacy_entities_list))
-        Logger().info("module duckling list is {}".format(duckling_entities_list))
+        Logger().info("Module's spacy list is {}".format(spacy_entities_list))
+        Logger().info("Module's duckling list is {}".format(duckling_entities_list))
 
         if duckling_entities_list:
             self.nerObjects["Duckling"].set_entities_types(duckling_entities_list)

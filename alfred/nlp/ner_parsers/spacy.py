@@ -24,8 +24,11 @@ class Spacy(NER):
 
     def get_name_entities(self, text):
         entities = self.get_ner(text)
-        return {entities_type: [entities[entities_type], entities[entities_type]]
-                for entities_type in self.entities_types_list}
+        parsed_entities = {}
+        for entities_type in self.entities_types_list:
+            if entities_type in entities:
+                parsed_entities[entities_type] = [entities[entities_type], entities[entities_type]]
+        return parsed_entities
 
     def getAnnotatedText(self, text):
         entities = self.get_ner(text)

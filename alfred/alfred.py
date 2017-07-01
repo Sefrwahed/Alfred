@@ -14,8 +14,10 @@ from .utils import WebBridge
 from .views import MainWidget
 from .views import MainWindow
 from alfred.logger import Logger
+from alfred.nlp.entity_type import EntityType
 
-
+TESTING_LIST_OF_ENTITIES = ['time', EntityType.Food.value]
+print(TESTING_LIST_OF_ENTITIES)
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -97,7 +99,9 @@ class Alfred(QMainWindow):
             module, module_info.class_name()
         )(module_info)
 
+        # self.modules_mgr.store_entities(module_info, TESTING_LIST_OF_ENTITIES)
         needed_entities = module_info.entities
+
         entities_list = Parser(needed_entities).parse(text)
         Logger().info("Extracted Entities are {}".format(entities_list))
 

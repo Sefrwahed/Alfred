@@ -1,6 +1,5 @@
 from duckling import DucklingWrapper
 from alfred.nlp.ner_parsers.ner import NER
-from alfred.logger import Logger
 
 
 class Duckling(NER):
