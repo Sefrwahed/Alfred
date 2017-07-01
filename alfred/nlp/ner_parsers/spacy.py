@@ -28,6 +28,8 @@ class Spacy(NER):
         for entities_type in self.entities_types_list:
             if entities_type in entities:
                 parsed_entities[entities_type] = [entities[entities_type], entities[entities_type]]
+            else:
+                parsed_entities[entities_type] = [None, None]
         return parsed_entities
 
     def getAnnotatedText(self, text):

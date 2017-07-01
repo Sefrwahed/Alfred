@@ -15,10 +15,12 @@ class Duckling(NER):
         pass
 
     def get_name_entities(self, text):
-        entities = []
+        parsed_entities = {}
         for dimType in self.entities_types_list:
             method_name = "parse_" + dimType
             entity = getattr(self.ducklingInstance, method_name)(text)
-            entities.append(entity)
-        return {entity[0]["dim"]: [entity[0]["value"]["value"], entity[0]["text"]]
-                for entity in entities}
+            if entity:
+                parsed_entities[entity[0]["dim"]] = [entity[0]["value"]["value"], entity[0]["text"].strip()]
+            else:
+                parsed_entities[dimType] = [None, None]
+        return parsed_entities
