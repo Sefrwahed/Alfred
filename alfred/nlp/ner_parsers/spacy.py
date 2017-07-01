@@ -24,7 +24,7 @@ class Spacy(NER):
 
     def get_name_entities(self, text):
         entities = self.get_ner(text)
-        return {entities_type: entities[entities_type]
+        return {entities_type: [entities[entities_type], entities[entities_type]]
                 for entities_type in self.entities_types_list}
 
     def getAnnotatedText(self, text):

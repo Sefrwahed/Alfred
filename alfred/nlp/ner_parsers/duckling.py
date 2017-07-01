@@ -1,5 +1,6 @@
 from duckling import DucklingWrapper
 from alfred.nlp.ner_parsers.ner import NER
+from alfred.logger import Logger
 
 
 class Duckling(NER):
@@ -20,5 +21,5 @@ class Duckling(NER):
             method_name = "parse_" + dimType
             entity = getattr(self.ducklingInstance, method_name)(text)
             entities.append(entity)
-        return {entity[0]["dim"]: entity[0]["value"]["value"]
+        return {entity[0]["dim"]: [entity[0]["value"]["value"], entity[0]["text"]]
                 for entity in entities}

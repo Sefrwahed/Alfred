@@ -11,6 +11,7 @@ class Parser(metaclass=Singleton):
         self.spacy_list = entity.SpacyEnitites
         self.NERParser_list = []
         self.parsed_entities = []
+        Logger().info("Instantiating Parsers..")
         self.nerObjects = {"Duckling": parsers.Duckling([]), "Spacy": parsers.Spacy()}
 
     def parse(self, text):
