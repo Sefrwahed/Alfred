@@ -1,5 +1,4 @@
 import os
-import threading
 
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 from jinja2 import Environment, FileSystemLoader
@@ -23,7 +22,7 @@ class ABaseModule(QThread):
         self.settings = Settings(settings_path)
 
         amg.module_db_path = os.path.join(self.module_info.root(),
-                                      'data', 'db.sqlite')
+                                          'data', 'db.sqlite')
 
         self.template_env = Environment(
             loader=FileSystemLoader(
@@ -44,7 +43,7 @@ class ABaseModule(QThread):
         if self.callback_method is None:
             self.callback()
             self.construct_view()
-            self.populate_view()
+            self.signal_view_changed.emit(self.components)
         else:
             self.callback_method(*self.callback_method_args)
 
@@ -61,9 +60,6 @@ class ABaseModule(QThread):
         t = self.template_env.get_template(t_name)
         html = t.render(**kwargs)
         self.add_component(html)
-
-    def populate_view(self):
-        self.signal_view_changed.emit(self.components)
 
     def remove_component_by_id(self, component_id):
         self.signal_remove_component.emit(component_id)

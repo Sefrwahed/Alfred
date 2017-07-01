@@ -43,20 +43,19 @@ class ABaseModel(ABC):
     def find_by(cls, **kwargs):
         cls.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
 
-        dataset_dict = cls.database[cls.__name__].find_one(**kwargs)
-        model = cls.__populate_model(dataset_dict)
+        dataset_dicts = cls.database[cls.__name__].find(**kwargs)
+        models = list(map(lambda d: cls.__populate_model(d), dataset_dicts))
 
         del cls.database
-        return model
+        return models
 
     @classmethod
     def find(cls, id):
-        return cls.find_by(id=id)
+        return cls.find_by(id=id)[0]
 
     @classmethod
     def all(cls):
         cls.database = dataset.connect('sqlite:///{}'.format(amg.module_db_path))
-
         models = []
         for d in cls.database[cls.__name__].all():
             model = cls.__populate_model(d)

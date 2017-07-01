@@ -14,6 +14,7 @@ from .nlp import Classifier
 from .modules import ModuleManager
 from .modules import ModuleInfo
 from .utils import WebBridge
+from .widget_manager import WidgetManager
 
 
 class Alfred(QMainWindow):
@@ -38,6 +39,7 @@ class Alfred(QMainWindow):
 
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
+        self.widget_man = WidgetManager(self.main_widget)
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -66,13 +68,17 @@ class Alfred(QMainWindow):
             self.show_main_widget()
 
     def show_main_widget(self):
+        self.main_widget.lineEdit.setText("")
+        self.main_widget.clear_view()
         self.main_widget.showFullScreen()
+        self.widget_man.prepare_widgets()
 
     def show_main_window(self):
         self.main_window.show()
 
     @pyqtSlot('QString')
     def process_text(self, text):
+        self.main_widget.set_status_icon_busy(True)
         module_info = ModuleInfo.find_by_id(Classifier().predict(text))
 
         if not module_info:
@@ -102,3 +108,4 @@ class Alfred(QMainWindow):
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
 
         self.curr_module.start()
+        self.main_widget.set_status_icon_busy(False)

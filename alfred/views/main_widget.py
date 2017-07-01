@@ -11,7 +11,6 @@ import alfred.alfred_globals as ag
 
 class MainWidget(QDialog, Ui_Dialog):
     text_changed = pyqtSignal('QString')
-
     def __init__(self, bridge_obj):
         QDialog.__init__(self)
         self.setupUi(self)
@@ -19,7 +18,6 @@ class MainWidget(QDialog, Ui_Dialog):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        self.last_text = ''
         self.lineEdit.returnPressed.connect(self.send_text)
 
         self.channel = QWebChannel(self.webView.page())
@@ -27,10 +25,19 @@ class MainWidget(QDialog, Ui_Dialog):
 
         self.channel.registerObject("web_bridge", bridge_obj)
 
+    def clear_view(self):
+        self.webView.page().setHtml("")
+
+    def set_status_icon_busy(self, busy):
+        if busy:
+            self.bot_status_icon.page().runJavaScript("document.getElementById('inner').style.width = '0px';")
+        else:
+            self.bot_status_icon.page().runJavaScript("document.getElementById('inner').style.width = '20px';")
+
     @pyqtSlot()
     def send_text(self):
         msg = self.lineEdit.text()
-        if msg != '' and self.last_text != msg:
+        if msg != '':
             self.text_changed.emit(msg)
             self.last_text = msg
 
