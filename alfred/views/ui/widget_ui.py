@@ -3,7 +3,7 @@ import os
 
 # PyQt imports
 from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtCore import QUrl, QMetaObject, QRect, QFileInfo
 
@@ -64,8 +64,12 @@ class Ui_Dialog(object):
         self.lineEdit.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
         self.lineEdit.setObjectName("lineEdit")
 
+        self.mic = QPushButton('mic')
+        self.mic.setAutoDefault(False)
+
         self.horizontalLayout.addWidget(self.bot_status_icon)
         self.horizontalLayout.addWidget(self.lineEdit)
+        self.horizontalLayout.addWidget(self.mic)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
