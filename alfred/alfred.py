@@ -73,10 +73,8 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        preprocessed_text = self.preprocess_text(text)
-        Logger().info("PreProcessed Text is : {}".format(preprocessed_text))
 
-        module_id = Classifier().predict(preprocessed_text)
+        module_id = Classifier().predict(text)
         module_info = ModuleInfo.find_by_id(module_id)
 
         if not module_info:
@@ -113,7 +111,3 @@ class Alfred(QMainWindow):
 
         self.curr_module.start()
 
-    def preprocess_text(self, text):
-        #normalizarion
-        #NER
-        return parsers.Spacy().getAnnotatedText(text)
