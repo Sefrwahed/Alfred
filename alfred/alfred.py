@@ -91,10 +91,8 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        preprocessed_text = self.preprocess_text(text)
-        Logger().info("PreProcessed Text is : {}".format(preprocessed_text))
 
-        module_id = Classifier().predict(preprocessed_text)
+        module_id = Classifier().predict(text)
         module_info = ModuleInfo.find_by_id(module_id)
 
         if not module_info:
@@ -112,15 +110,16 @@ class Alfred(QMainWindow):
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
             self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
+        try:
+            needed_entities = module_info.needed_entities()
+            entities_list = Parser(needed_entities).parse(text)
+            Logger().info("Extracted Entities are {}".format(entities_list))
+        except:
+            entities_list = {}
+
         self.curr_module = getattr(
             module, module_info.class_name()
-        )(module_info)
-
-        needed_entities = module_info.needed_entities()
-        Logger().info("Needed Entities are {}".format(needed_entities))
-
-        entities_list = Parser().parse(needed_entities, text)
-        Logger().info("Extracted Entities are {}".format(entities_list))
+        )(module_info, entities_list)
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
 
@@ -132,7 +131,3 @@ class Alfred(QMainWindow):
 
         self.curr_module.start()
 
-    def preprocess_text(self, text):
-        #normalizarion
-        #NER
-        return parsers.Spacy().getAnnotatedText(text)

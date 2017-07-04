@@ -1,11 +1,7 @@
 import json
 import os
 import re
-import numpy as np
 from sqlalchemy import Column, Integer, String
-from sqlalchemy import ForeignKey
-from sqlalchemy import Text
-from sqlalchemy.orm import relationship
 
 from alfred import alfred_globals as ag
 from alfred.modules.db_manager import DBManager
@@ -25,7 +21,6 @@ class ModuleInfo(DBManager().DBModelBase):
         self.source = source
         self.user = user
         self.version = version
-        DBManager().refresh_tables()
 
     def root(self):
         return os.path.join(ag.modules_folder_path,
@@ -75,3 +70,5 @@ class ModuleInfo(DBManager().DBModelBase):
     @classmethod
     def all(cls):
         return DBManager().session.query(ModuleInfo).all()
+
+DBManager().refresh_tables()

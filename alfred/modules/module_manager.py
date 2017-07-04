@@ -109,6 +109,7 @@ class ModuleManager(QObject):
         os.remove(self.module_zip_path)
 
         info = ModuleInfo(name, source, username, version)
+        info.create()
 
         from alfred.nlp import Classifier
         Classifier().train()
