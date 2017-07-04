@@ -22,6 +22,7 @@ from alfred import alfred_globals as ag
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+        self.show_splash()
         self.init_tray_icon()
 
         self.web_bridge = WebBridge()
@@ -41,7 +42,6 @@ class Alfred(QMainWindow):
 
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
-        self.show_splash()
 
 
     def show_splash(self):
