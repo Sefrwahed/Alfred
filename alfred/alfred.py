@@ -5,7 +5,6 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen
 
-import alfred.nlp.ner_parsers as parsers
 from alfred.nlp.parser import Parser
 from .modules import ModuleInfo
 from .modules import ModuleManager
@@ -14,9 +13,6 @@ from .utils import WebBridge
 from .views import MainWidget
 from .views import MainWindow
 from alfred.logger import Logger
-import os
-from alfred import alfred_globals as ag
-
 
 
 class Alfred(QMainWindow):
@@ -43,9 +39,7 @@ class Alfred(QMainWindow):
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
 
-
     def show_splash(self):
-        # imagepath = os.path.join(ag.js_path, ag.db_name)
         image = QPixmap(':/loading_image')
         splash = QSplashScreen(image)
         splash.setAttribute(Qt.WA_DeleteOnClose)
@@ -53,7 +47,7 @@ class Alfred(QMainWindow):
         splash.show()
 
         QCoreApplication.processEvents()
-        Parser()
+        Parser([])
 
         splash.finish(self)
 
@@ -112,7 +106,8 @@ class Alfred(QMainWindow):
 
         try:
             needed_entities = module_info.needed_entities()
-            entities_list = Parser(needed_entities).parse(text)
+            Parser([]).set_entities_types(needed_entities)
+            entities_list = Parser([]).parse(text)
             Logger().info("Extracted Entities are {}".format(entities_list))
         except:
             entities_list = {}
