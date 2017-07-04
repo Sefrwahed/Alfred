@@ -17,6 +17,7 @@ import tarfile
 class ModuleManager(QObject):
     _instance = None
 
+    module_data = None
     data_fetched = pyqtSignal(list)
     conn_err = pyqtSignal()
     installation_finished = pyqtSignal(int)
@@ -46,7 +47,7 @@ class ModuleManager(QObject):
         if self.rthread.purpose == "list":
             self.data_fetched.emit(self.rthread.data)
         else:
-            self.install()
+            self.install(self.module_data)
 
     @pyqtSlot(dict)
     def download(self, module):
@@ -57,7 +58,7 @@ class ModuleManager(QObject):
         )
         self.create_thread()
         self.rthread.purpose = "download"
-        self.mod_data = module
+        self.module_data = module
         self.rthread.url = ag.modules_download_url.format(
             id=module["id"],
             version_id=module["latest_version"]["id"]
@@ -73,13 +74,15 @@ class ModuleManager(QObject):
         self.rthread.purpose = "list"
         self.rthread.start()
 
-    def install(self):
+    @pyqtSlot(dict)
+    def install(self, mod_data):
         # TODO fetch missing module info
         source = 'alfredhub'
 
-        name = self.mod_data['name']
-        username = self.mod_data['user']['username']
-        version = self.mod_data['latest_version']['number']
+        mod_id = mod_data['id']
+        name = mod_data['name']
+        username = mod_data['user']['username']
+        version = mod_data['latest_version']['number']
 
         install_dir = os.path.join(ag.user_folder_path, 'modules',
                                    source, username, name)
@@ -107,15 +110,17 @@ class ModuleManager(QObject):
 
         os.remove(self.module_zip_path)
 
-        info = ModuleInfo(name, source, username, version)
+        info = ModuleInfo(mod_id,name, source, username, version)
         info.create()
 
         from alfred.nlp import Classifier
         Classifier().train()
-        self.installation_finished.emit(int(self.mod_data['id']))
+        self.installation_finished.emit(int(self.module_data['id']))
 
-    def uninstall(self, mod_data):
-        info = ModuleInfo.find_by_id(mod_data["id"])
+    @pyqtSlot(int)
+    def uninstall(self, mod_id):
+        info = ModuleInfo.find_by_id(mod_id)
+        print('{m}'.format(m=info))
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
@@ -128,11 +133,12 @@ class ModuleManager(QObject):
             Logger().err(ex)
 
         info.destroy()
-        self.uninstallation_finished.emit(mod_data["id"])
+        self.uninstallation_finished.emit(info)
         Logger().info("Unistalled module successfully")
         from alfred.nlp import Classifier
         Classifier().train()
 
+    @pyqtSlot(dict)
     def update(self, mod_data):
-        self.uninstall(mod_data)
-        self.install(mod_data)
+        self.uninstall(mod_data["id"])
+        self.download(mod_data)

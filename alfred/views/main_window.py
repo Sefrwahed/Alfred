@@ -31,14 +31,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
 
             item.signal_install.connect(ModuleManager.instance().download)
+            item.signal_update.connect(ModuleManager.instance().update)
+            mod_id = module["id"]
+            print(mod_id)
             item.signal_uninstall.connect(ModuleManager.instance().uninstall)
 
+
             ModuleManager.instance().installation_finished.connect(
-                item.installed
+                item.installed_or_updated
             )
             ModuleManager.instance().uninstallation_finished.connect(
                 item.uninstalled
             )
+
 
         self.groupBoxError.hide()
 

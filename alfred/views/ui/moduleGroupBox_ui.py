@@ -57,17 +57,26 @@ class Ui_GroupBox(object):
         self.labelDesc_2.setObjectName("labelDesc_2")
         self.verticalLayout_2.addWidget(self.labelDesc_2)
         self.labelVersion_2 = QtWidgets.QLabel(GroupBox)
+        self.labelInstalledVersion_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.labelVersion_2.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.labelInstalledVersion_2.sizePolicy().hasHeightForWidth())
         self.labelVersion_2.setSizePolicy(sizePolicy)
+        self.labelInstalledVersion_2.setSizePolicy(sizePolicy)
         self.labelVersion_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
+        self.labelInstalledVersion_2.setStyleSheet("QLabel{\n"
+                                          "    background-color: rgba(0, 0, 0, 0);\n"
+                                          "    color: rgb(243, 243, 243);\n"
+                                          "}")
         self.labelVersion_2.setObjectName("labelVersion_2")
+        self.labelInstalledVersion_2.setObjectName("labelInstalledVersion_2")
         self.verticalLayout_2.addWidget(self.labelVersion_2)
+        self.verticalLayout_2.addWidget(self.labelInstalledVersion_2)
         self.labelLicense_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
