@@ -10,6 +10,7 @@ import alfred.alfred_globals as ag
 
 from alfred.speech_recognition._speech_recognition import SpeechRecognition
 
+
 class MainWidget(QDialog, Ui_Dialog):
     text_changed = pyqtSignal('QString')
 
@@ -30,9 +31,13 @@ class MainWidget(QDialog, Ui_Dialog):
 
         self.channel.registerObject("web_bridge", bridge_obj)
 
+        self.speech = SpeechRecognition()
+        self.speech.return_msg.connect(self.update_lineEdit_and_run)
+
 
     @pyqtSlot()
     def send_text(self):
+        self.lineEdit.setPlaceholderText("ask me anything...")
         msg = self.lineEdit.text()
         if msg != '' and self.last_text != msg:
             self.text_changed.emit(msg)
@@ -43,13 +48,15 @@ class MainWidget(QDialog, Ui_Dialog):
         print ('start voice listening') ##Debug
         self.lineEdit.clear()
         self.lineEdit.setPlaceholderText("Start speaking, I am listening...")
-        s = SpeechRecognition()
-        msg = s.listen()
-        if msg == '':
-            print("Didn't hear it!!")
-        print (msg) ##Debug
-        self.lineEdit.setText(msg)
-        self.send_text()
+        self.speech.start() ##Thread start
+
+    @pyqtSlot(str)
+    def update_lineEdit_and_run(self, message):
+        if message != '':
+            self.lineEdit.setText(message)
+            self.send_text()
+        else:
+            self.lineEdit.setPlaceholderText("Couldn't hear it.... :(")
 
     @pyqtSlot(list)
     def set_view(self, components):
