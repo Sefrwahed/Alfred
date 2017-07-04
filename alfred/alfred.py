@@ -1,20 +1,20 @@
 # Python builtins imports
 import sys
 
-# PyQt imports
 from PyQt5.QtCore import QCoreApplication, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
 
-# Local imports
-from . import data_rc
-from .views import MainWidget
-from .views import MainWindow
-from .nlp import Classifier
-from .modules import ModuleManager
+from alfred.nlp.parser import Parser
 from .modules import ModuleInfo
+from .modules import ModuleManager
+from .nlp import Classifier
 from .utils import WebBridge
 from .widget_manager import WidgetManager
+
+from .views import MainWidget
+from .views import MainWindow
+from alfred.logger import Logger
 
 
 class Alfred(QMainWindow):
@@ -65,7 +65,7 @@ class Alfred(QMainWindow):
 
     def tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.show_main_widget()
+             self.show_main_widget()
 
     def show_main_widget(self):
         self.main_widget.lineEdit.setText("")
@@ -96,11 +96,20 @@ class Alfred(QMainWindow):
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
             self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
+        try:
+            needed_entities = module_info.needed_entities()
+
+            entities_list = Parser(needed_entities).parse(text)
+            Logger().info("Extracted Entities are {}".format(entities_list))
+        except:
+            entities_list = {}
+
         self.curr_module = getattr(
             module, module_info.class_name()
-        )(module_info)
+        )(module_info, entities_list)
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
+
         self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
         self.curr_module.signal_append_content.connect(self.main_widget.append_content)
 

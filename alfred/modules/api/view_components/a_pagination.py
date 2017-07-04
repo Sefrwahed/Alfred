@@ -3,6 +3,7 @@ from .a_unordered_list import AUnorderedList
 from .a_component import AComponent
 from .a_href import AHref
 from .a_icon import AIcon
+
 from .a_script import AScript
 
 class APagination(AComponent):

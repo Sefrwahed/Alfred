@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from sqlalchemy import Column, Integer, String
@@ -33,6 +34,18 @@ class ModuleInfo(DBManager().DBModelBase):
                             'resources',
                             'training_sentences.json')
 
+    def needed_entities(self):
+        path = os.path.join(self.root(),
+                            self.package_name(),
+                            'resources',
+                            'needed_entities.json')
+        with open(path) as entities_file:
+            entities_sent = json.load(entities_file)
+
+
+        return entities_sent
+
+
     def package_name(self) -> str:
         return re.sub(r'\W', '_', self.name)
 
@@ -53,12 +66,11 @@ class ModuleInfo(DBManager().DBModelBase):
         DBManager().session.commit()
 
     @classmethod
-    def find_by_id(cls, id):
-        return DBManager().session.query(ModuleInfo).get(int(id))
+    def find_by_id(cls, module_id):
+        return DBManager().session.query(ModuleInfo).get(int(module_id))
 
     @classmethod
     def all(cls):
         return DBManager().session.query(ModuleInfo).all()
-
 
 DBManager().refresh_tables()

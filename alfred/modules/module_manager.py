@@ -7,7 +7,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 # Local imports
 from alfred import alfred_globals as ag
-from alfred.nlp import Classifier
+# from alfred.nlp.classifier import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
 from alfred.logger import Logger
@@ -86,10 +86,10 @@ class ModuleManager(QObject):
 
         Logger().info("Installing module {}".format(name))
         Logger().info("Installation dir is {}".format(install_dir))
-        for dir in [install_dir]:
-            if os.path.exists(dir):
-                shutil.rmtree(dir)
-            os.makedirs(dir)
+        for directory in [install_dir]:
+            if os.path.exists(directory):
+                shutil.rmtree(directory)
+            os.makedirs(directory)
 
         path = self.module_zip_path
 
@@ -109,6 +109,8 @@ class ModuleManager(QObject):
 
         info = ModuleInfo(name, source, username, version)
         info.create()
+
+        from alfred.nlp import Classifier
         Classifier().train()
         self.installation_finished.emit(int(self.mod_data['id']))
 
@@ -123,11 +125,12 @@ class ModuleManager(QObject):
         try:
             shutil.rmtree(module_folder_path)
         except Exception as ex:
-            print(ex)
+            Logger().err(ex)
 
         info.destroy()
         self.uninstallation_finished.emit(mod_data["id"])
         Logger().info("Unistalled module successfully")
+        from alfred.nlp import Classifier
         Classifier().train()
 
     def update(self, mod_data):
