@@ -115,7 +115,7 @@ class ModuleManager(QObject):
         self.installation_finished.emit(int(self.mod_data['id']))
 
     def uninstall(self, mod_data):
-        info = ModuleInfo.find_by_id(mod_data["id"])
+        info = ModuleInfo.find_by_id(mod_data)
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
@@ -128,7 +128,7 @@ class ModuleManager(QObject):
             Logger().err(ex)
 
         info.destroy()
-        self.uninstallation_finished.emit(mod_data["id"])
+        self.uninstallation_finished.emit(mod_data)
         Logger().info("Unistalled module successfully")
         from alfred.nlp import Classifier
         Classifier().train()
