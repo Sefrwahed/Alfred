@@ -42,9 +42,7 @@ class ModuleInfo(DBManager().DBModelBase):
         with open(path) as entities_file:
             entities_sent = json.load(entities_file)
 
-
         return entities_sent
-
 
     def package_name(self) -> str:
         return re.sub(r'\W', '_', self.name)

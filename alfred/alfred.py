@@ -1,9 +1,10 @@
 # Python builtins imports
 import sys
 
-from PyQt5.QtCore import QCoreApplication, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen
+
 
 from alfred.nlp.parser import Parser
 from .modules import ModuleInfo
@@ -20,6 +21,7 @@ from alfred.logger import Logger
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+        self.show_splash()
         self.init_tray_icon()
 
         self.web_bridge = WebBridge()
@@ -40,6 +42,18 @@ class Alfred(QMainWindow):
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
         self.widget_man = WidgetManager(self.main_widget)
+
+    def show_splash(self):
+        image = QPixmap(':/loading_image')
+        splash = QSplashScreen(image)
+        splash.setAttribute(Qt.WA_DeleteOnClose)
+        splash.setMask(image.mask())
+        splash.show()
+
+        QCoreApplication.processEvents()
+        Parser([])
+
+        splash.finish(self)
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -79,7 +93,9 @@ class Alfred(QMainWindow):
     @pyqtSlot('QString')
     def process_text(self, text):
         self.main_widget.set_status_icon_busy(True)
-        module_info = ModuleInfo.find_by_id(Classifier().predict(text))
+
+        module_id = Classifier().predict(text)
+        module_info = ModuleInfo.find_by_id(module_id)
 
         if not module_info:
             return
@@ -98,8 +114,8 @@ class Alfred(QMainWindow):
 
         try:
             needed_entities = module_info.needed_entities()
-
-            entities_list = Parser(needed_entities).parse(text)
+            Parser([]).set_entities_types(needed_entities)
+            entities_list = Parser([]).parse(text)
             Logger().info("Extracted Entities are {}".format(entities_list))
         except:
             entities_list = {}
@@ -117,4 +133,5 @@ class Alfred(QMainWindow):
         self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
 
         self.curr_module.start()
+
         self.main_widget.set_status_icon_busy(False)

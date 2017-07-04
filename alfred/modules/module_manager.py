@@ -14,6 +14,7 @@ from alfred.logger import Logger
 
 import tarfile
 
+
 class ModuleManager(QObject):
     _instance = None
 

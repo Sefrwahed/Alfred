@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file alias="icon_heart">resources/heart.svg</file>
+        <file alias="loading_image">resources/loading1.jpg</file>
     </qresource>
 </RCC>
