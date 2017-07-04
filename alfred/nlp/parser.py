@@ -5,16 +5,18 @@ from alfred.logger import Logger
 
 
 class Parser(metaclass=Singleton):
-    def __init__(self, entities_list):
-        self.entities_list = entities_list
+    def __init__(self):
+        self.entities_list = []
         self.duckling_list = entity.DucklingEntities
         self.spacy_list = entity.SpacyEnitites
         self.NERParser_list = []
         self.parsed_entities = []
         Logger().info("Instantiating Parsers..")
         self.nerObjects = {"Duckling": parsers.Duckling([]), "Spacy": parsers.Spacy()}
+        Logger().info("Parsers are Instantiated ..")
 
-    def parse(self, text):
+    def parse(self, entities_list, text):
+        self.entities_list = entities_list
         self.parsed_entities.clear()
         self.NERParser_list.clear()
 

@@ -1,9 +1,9 @@
 # Python builtins imports
 import sys
 
-from PyQt5.QtCore import QCoreApplication, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen
 
 import alfred.nlp.ner_parsers as parsers
 from alfred.nlp.parser import Parser
@@ -14,7 +14,10 @@ from .utils import WebBridge
 from .views import MainWidget
 from .views import MainWindow
 from alfred.logger import Logger
-from alfred.nlp.entity_type import EntityType
+import os
+from alfred import alfred_globals as ag
+
+
 
 class Alfred(QMainWindow):
     def __init__(self):
@@ -38,6 +41,21 @@ class Alfred(QMainWindow):
 
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
+        self.show_splash()
+
+
+    def show_splash(self):
+        # imagepath = os.path.join(ag.js_path, ag.db_name)
+        image = QPixmap("/home/shimaa/Desktop/Working_Space/gp/Alfred/alfred/resources/loading1.jpg")
+        splash = QSplashScreen(image)
+        splash.setAttribute(Qt.WA_DeleteOnClose)
+        splash.setMask(image.mask())
+        splash.show()
+
+        QCoreApplication.processEvents()
+        Parser()
+
+        splash.finish(self)
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -99,9 +117,9 @@ class Alfred(QMainWindow):
         )(module_info)
 
         needed_entities = module_info.needed_entities()
-        print(needed_entities)
+        Logger().info("Needed Entities are {}".format(needed_entities))
 
-        entities_list = Parser(needed_entities).parse(text)
+        entities_list = Parser().parse(needed_entities, text)
         Logger().info("Extracted Entities are {}".format(entities_list))
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)

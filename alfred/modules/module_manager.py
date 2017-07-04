@@ -10,10 +10,10 @@ from alfred import alfred_globals as ag
 # from alfred.nlp.classifier import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
-from .module_info import Entity
 from alfred.logger import Logger
 
 import tarfile
+
 
 class ModuleManager(QObject):
     _instance = None
@@ -81,10 +81,6 @@ class ModuleManager(QObject):
         name = self.mod_data['name']
         username = self.mod_data['user']['username']
         version = self.mod_data['latest_version']['number']
-        try:
-            needed_entities = self.mod_data['entities']
-        except:
-            needed_entities = []
 
         install_dir = os.path.join(ag.user_folder_path, 'modules',
                                    source, username, name)
@@ -113,7 +109,6 @@ class ModuleManager(QObject):
         os.remove(self.module_zip_path)
 
         info = ModuleInfo(name, source, username, version)
-        self.store_entities(info, needed_entities)
 
         from alfred.nlp import Classifier
         Classifier().train()
@@ -141,10 +136,3 @@ class ModuleManager(QObject):
     def update(self, mod_data):
         self.uninstall(mod_data)
         self.install(mod_data)
-
-    def store_entities(self, info, entities):
-        entities_records = []
-        for entity in entities:
-            entities_records.append(Entity(entity_name=entity))
-        info.entities = entities_records
-        info.create()
