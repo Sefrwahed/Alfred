@@ -92,10 +92,13 @@ class Alfred(QMainWindow):
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
             self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
-        needed_entities = module_info.needed_entities()
+        try:
+            needed_entities = module_info.needed_entities()
 
-        entities_list = Parser(needed_entities).parse(text)
-        Logger().info("Extracted Entities are {}".format(entities_list))
+            entities_list = Parser(needed_entities).parse(text)
+            Logger().info("Extracted Entities are {}".format(entities_list))
+        except:
+            entities_list = {}
 
         self.curr_module = getattr(
             module, module_info.class_name()
