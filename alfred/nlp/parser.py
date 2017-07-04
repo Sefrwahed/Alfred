@@ -1,5 +1,6 @@
 import alfred.nlp.entity_type as entity
 import alfred.nlp.ner_parsers as parsers
+from alfred.nlp.true_casing import AlfredTrueCasing as true_casing
 from alfred.utils import Singleton
 from alfred.logger import Logger
 
@@ -11,12 +12,18 @@ class Parser(metaclass=Singleton):
         self.spacy_list = entity.SpacyEnitites
         self.NERParser_list = []
         self.parsed_entities = []
+        self.true_casing = true_casing()
         Logger().info("Instantiating Parsers..")
         self.nerObjects = {"Duckling": parsers.Duckling([]), "Spacy": parsers.Spacy()}
 
     def parse(self, text):
         self.parsed_entities.clear()
         self.NERParser_list.clear()
+        doc = self.nerObjects["Spacy"].spacyNlp(text)
+        pos_tags = []
+        for word in doc:
+            pos_tags.append((str(word), str(word.tag_)))
+        text = self.true_casing.fix(pos_tags)
 
         Logger().info("Parsing entities in progress..")
         self.parse_list(text)
