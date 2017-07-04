@@ -46,7 +46,7 @@ class Alfred(QMainWindow):
 
     def show_splash(self):
         # imagepath = os.path.join(ag.js_path, ag.db_name)
-        image = QPixmap("/home/shimaa/Desktop/Working_Space/gp/Alfred/alfred/resources/loading1.jpg")
+        image = QPixmap(':/loading_image')
         splash = QSplashScreen(image)
         splash.setAttribute(Qt.WA_DeleteOnClose)
         splash.setMask(image.mask())
