@@ -2,7 +2,7 @@
 import os
 
 # PyQt imports
-from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
+from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets, QtGui
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtCore import QUrl, QMetaObject, QRect, QFileInfo
@@ -64,8 +64,22 @@ class Ui_Dialog(object):
         self.lineEdit.setCursorMoveStyle(QtCore.Qt.VisualMoveStyle)
         self.lineEdit.setObjectName("lineEdit")
 
-        self.mic = QPushButton('mic')
+        self.mic = QPushButton('')
         self.mic.setAutoDefault(False)
+        self.mic.setObjectName("mic")
+        self.mic.setStyleSheet(
+            "QPushButton { \n"
+            "    background-color: rgba(0, 0, 0, 0);\n"
+            "    color: rgb(243, 243, 243);\n"
+            "    font-size: 40px;\n"
+            "    padding: 8px;\n"
+            "    border: 5px solid rgb(6, 184, 251);\n"
+            "    border-style: none none solid none;\n"
+            "}"
+        )
+        self.mic.setIcon(QtGui.QIcon(curr_dir + '/Studio-Mic-icon.png'))
+        #self.mic.setIcon(QtGui.QIcon('..:/resources/Studio-Mic-icon.png'))
+        self.mic.setIconSize(QtCore.QSize(50,50))
 
         self.horizontalLayout.addWidget(self.bot_status_icon)
         self.horizontalLayout.addWidget(self.lineEdit)
