@@ -3,7 +3,7 @@ import sys
 
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen, QInputDialog
 
 
 from alfred.nlp.parser import Parser
@@ -42,6 +42,10 @@ class Alfred(QMainWindow):
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
         self.widget_man = WidgetManager(self.main_widget)
+
+        self.curr_sentence = ''
+
+        self.web_bridge.signal_wrong_module.connect(self.add_new_sentence)
 
     def show_splash(self):
         image = QPixmap(':/loading_image')
@@ -92,6 +96,7 @@ class Alfred(QMainWindow):
 
     @pyqtSlot('QString')
     def process_text(self, text):
+        self.curr_sentence = text
         self.main_widget.set_status_icon_busy(True)
 
         module_id = Classifier().predict(text)
@@ -100,6 +105,24 @@ class Alfred(QMainWindow):
         if not module_info:
             return
 
+        self.set_module(module_info)
+
+        self.main_widget.set_status_icon_busy(False)
+
+    @pyqtSlot()
+    def add_new_sentence(self):
+        self.main_widget.hide()
+        modules = dict(map(lambda m: (m.name, m), ModuleInfo.all()))
+        item, ok = QInputDialog.getItem(self, self.curr_sentence, "Select Module:",
+                                     modules.keys(), 0, False);
+        print(item, ok)
+
+        if ok:
+            self.main_widget.lineEdit.setText(self.curr_sentence)
+            self.main_widget.showFullScreen()
+            self.set_module(modules[item])
+
+    def set_module(self, module_info):
         if module_info.root() in sys.path:
             sys.path.remove(module_info.root())
         sys.path.append(module_info.root())
@@ -134,4 +157,3 @@ class Alfred(QMainWindow):
 
         self.curr_module.start()
 
-        self.main_widget.set_status_icon_busy(False)

@@ -21,7 +21,7 @@ class WidgetManager(QObject):
 
     def prepare_widgets(self):
         self.widgets_container = ARow()
-        self.view_widget.set_view([self.widgets_container])
+        self.view_widget.set_widget_view([self.widgets_container])
         self.loading_timer.start()
 
     def widgets_container_loaded(self):
