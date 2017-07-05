@@ -78,6 +78,7 @@ class ModuleManager(QObject):
         # TODO fetch missing module info
         source = 'alfredhub'
 
+        id = self.mod_data['id']
         name = self.mod_data['name']
         username = self.mod_data['user']['username']
         version = self.mod_data['latest_version']['number']
@@ -108,7 +109,7 @@ class ModuleManager(QObject):
 
         os.remove(self.module_zip_path)
 
-        info = ModuleInfo(name, source, username, version)
+        info = ModuleInfo(id, name, source, username, version)
         info.create()
 
         from alfred.nlp import Classifier

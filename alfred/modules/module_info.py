@@ -16,7 +16,8 @@ class ModuleInfo(DBManager().DBModelBase):
     user = Column(String(256), nullable=False)
     version = Column(String(256), nullable=False)
 
-    def __init__(self, name, source, user, version):
+    def __init__(self, id,  name, source, user, version):
+        self.id = id
         self.name = name
         self.source = source
         self.user = user
