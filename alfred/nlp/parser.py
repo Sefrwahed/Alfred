@@ -48,13 +48,20 @@ class Parser(metaclass=Singleton):
             self.nerObjects["Spacy"].set_entities_types(spacy_entities_list)
             self.NERParser_list.append(self.nerObjects["Spacy"])
 
+
         if self.NERParser_list:
+            parsed_entities = {}
             for parser in self.NERParser_list:
                 t_text = text
                 while True:
-                    named_entity = parser.get_name_entities(text)
+                    named_entity = parser.get_name_entities(t_text)
                     for key in named_entity :
-                        pass
-                    self.parsed_entities.append()
-                    if t_text == "" or named_entity:
+                        ret_text  = named_entity[key][1]
+                        if ret_text != None :
+                            t_text = t_text.replace(ret_text,"")
+                            if not (key in parsed_entities):
+                                parsed_entities[key] = []
+                            parsed_entities[key].append(named_entity[key])
+                    if t_text == "" or ret_text == None:
                         break
+        self.parsed_entities = parsed_entities
