@@ -50,4 +50,11 @@ class Parser(metaclass=Singleton):
 
         if self.NERParser_list:
             for parser in self.NERParser_list:
-                self.parsed_entities.append(parser.get_name_entities(text))
+                t_text = text
+                while True:
+                    named_entity = parser.get_name_entities(text)
+                    for key in named_entity :
+                        pass
+                    self.parsed_entities.append()
+                    if t_text == "" or named_entity:
+                        break
