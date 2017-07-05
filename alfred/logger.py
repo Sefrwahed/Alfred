@@ -1,12 +1,20 @@
-from logbook import Logger, StreamHandler
 import sys
 
-# Local includes
+from logbook import Logger as l, StreamHandler
+
 import alfred.alfred_globals as ag
+from alfred.utils import Singleton
 
 
-StreamHandler(sys.stdout).push_application()
-_logger = Logger(ag.APP_NAME)
+class Logger(metaclass=Singleton):
+    def __init__(self):
+        self._logger = l(ag.APP_NAME)
+        log_file = open(ag.global_file_path(ag.LOG_FILE), 'w')
+        StreamHandler(log_file).push_application()
+        StreamHandler(sys.stdout, bubble=True).push_application()
 
-def info(msg):
-    _logger.info(msg)
+    def info(self, msg):
+        self._logger.info(msg)
+
+    def err(self, msg):
+        self._logger.error(msg)

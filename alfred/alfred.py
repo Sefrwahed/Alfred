@@ -1,25 +1,59 @@
-# PyQt imports
-from PyQt5.QtCore import QCoreApplication, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu
+# Python builtins imports
+import sys
 
-# Local imports
-import imp
-import os
-from . import alfred_globals as ag
-from .main_widget import MainWidget
-from .main_window import MainWindow
-from .nlp import classifier
-from .modules.module_info import get_module_by_id
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QSystemTrayIcon, QAction, QMenu, QSplashScreen
+
+
+from alfred.nlp.parser import Parser
+from .modules import ModuleInfo
+from .modules import ModuleManager
+from .nlp import Classifier
+from .utils import WebBridge
+from .widget_manager import WidgetManager
+
+from .views import MainWidget
+from .views import MainWindow
+from alfred.logger import Logger
 
 
 class Alfred(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
+        self.show_splash()
         self.init_tray_icon()
-        self.main_widget = MainWidget()
+
+        self.web_bridge = WebBridge()
+        self.main_widget = MainWidget(self.web_bridge)
         self.main_widget.text_changed.connect(self.process_text)
+
         self.main_window = MainWindow()
+        self.modules_mgr = ModuleManager.instance()
+
+        self.main_window.signal_list_modules.connect(
+            self.modules_mgr.fetch_data
+        )
+
+        self.modules_mgr.conn_err.connect(
+            self.main_window.handle_connection_error
+        )
+
+        self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
+        self.curr_module = None
+        self.widget_man = WidgetManager(self.main_widget)
+
+    def show_splash(self):
+        image = QPixmap(':/loading_image')
+        splash = QSplashScreen(image)
+        splash.setAttribute(Qt.WA_DeleteOnClose)
+        splash.setMask(image.mask())
+        splash.show()
+
+        QCoreApplication.processEvents()
+        Parser([])
+
+        splash.finish(self)
 
     def init_tray_icon(self):
         self.show_widget = QAction("Show Main Widget", self)
@@ -44,32 +78,60 @@ class Alfred(QMainWindow):
         self.tray_icon.activated.connect(self.tray_icon_activated)
 
     def tray_icon_activated(self, reason):
-        if(reason == QSystemTrayIcon.Trigger):
-            self.show_main_widget()
+        if reason == QSystemTrayIcon.Trigger:
+             self.show_main_widget()
 
     def show_main_widget(self):
+        self.main_widget.lineEdit.setText("")
+        self.main_widget.clear_view()
         self.main_widget.showFullScreen()
+        self.widget_man.prepare_widgets()
 
     def show_main_window(self):
         self.main_window.show()
 
     @pyqtSlot('QString')
     def process_text(self, text):
-        module_info = get_module_by_id(classifier.predict(text))
+        self.main_widget.set_status_icon_busy(True)
+
+        module_id = Classifier().predict(text)
+        module_info = ModuleInfo.find_by_id(module_id)
+
         if not module_info:
             return
 
-        mod = imp.load_source(
-            module_info.entry_point(),
-            os.path.join(ag.modules_folder_path,
-                         module_info.root(),
-                         module_info.entry_point())
-        )
+        if module_info.root() in sys.path:
+            sys.path.remove(module_info.root())
+        sys.path.append(module_info.root())
 
-        self.curr_alfred_module = getattr(mod, module_info.class_name())()
+        package_name = module_info.package_name()
+        module = __import__('{}.{}'.format(package_name, package_name),
+                            fromlist=package_name)
 
-        self.curr_alfred_module.run()
+        if self.curr_module is not None:
+            self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
+            self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
-        temp = ag.main_components_env.get_template("base.html")
-        html = temp.render(componenets=self.curr_alfred_module.components)
-        self.main_widget.webView.page().setHtml(html)
+        try:
+            needed_entities = module_info.needed_entities()
+            Parser([]).set_entities_types(needed_entities)
+            entities_list = Parser([]).parse(text)
+            Logger().info("Extracted Entities are {}".format(entities_list))
+        except:
+            entities_list = {}
+
+        self.curr_module = getattr(
+            module, module_info.class_name()
+        )(module_info, entities_list)
+
+        self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
+
+        self.curr_module.signal_remove_component.connect(self.main_widget.remove_component)
+        self.curr_module.signal_append_content.connect(self.main_widget.append_content)
+
+        self.web_bridge.signal_event_triggered.connect(self.curr_module.event_triggered)
+        self.web_bridge.signal_form_submitted.connect(self.curr_module.form_submitted)
+
+        self.curr_module.start()
+
+        self.main_widget.set_status_icon_busy(False)

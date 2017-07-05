@@ -1,22 +1,23 @@
+import json
 import os
-from sqlalchemy import Column, Integer, String, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.session import sessionmaker
+import re
+from sqlalchemy import Column, Integer, String
 
 from alfred import alfred_globals as ag
+from alfred.modules.db_manager import DBManager
 
-Base = declarative_base()
 
-
-class ModuleInfo(Base):
+class ModuleInfo(DBManager().DBModelBase):
     __tablename__ = 'module_info'
+
     id = Column(Integer, primary_key=True)
     name = Column(String(256), nullable=False)
     source = Column(String(256), nullable=False)
     user = Column(String(256), nullable=False)
     version = Column(String(256), nullable=False)
 
-    def __init__(self, name, source, user, version):
+    def __init__(self, id,  name, source, user, version):
+        self.id = id
         self.name = name
         self.source = source
         self.user = user
@@ -30,57 +31,45 @@ class ModuleInfo(Base):
 
     def training_sentences_json_file_path(self):
         return os.path.join(self.root(),
-                            "training_sentences.json")
+                            self.package_name(),
+                            'resources',
+                            'training_sentences.json')
+
+    def needed_entities(self):
+        path = os.path.join(self.root(),
+                            self.package_name(),
+                            'resources',
+                            'needed_entities.json')
+        with open(path) as entities_file:
+            entities_sent = json.load(entities_file)
+
+        return entities_sent
+
+    def package_name(self) -> str:
+        return re.sub(r'\W', '_', self.name)
 
     def entry_point(self):
-        return self.name + ".py"
+        return self.package_name() + ".py"
 
     def class_name(self):
-        return "".join(w.title() for w in self.name.split("-"))
+        return "".join(w.title() for w in self.package_name().split("_"))
 
-SessionMaker = None
+    def create(self):
+        DBManager().session.add(self)
+        DBManager().session.commit()
 
+    def destroy(self):
+        DBManager().session.query(ModuleInfo).filter(
+            ModuleInfo.id == self.id
+        ).delete()
+        DBManager().session.commit()
 
-def init_db():
-    filepath = os.path.join(ag.user_folder_path, ag.db_name)
-    engine = create_engine('sqlite:///{}'.format(filepath))
-    Base.metadata.bind = engine
-    if not os.path.isfile(filepath):
-        Base.metadata.create_all()
-    global SessionMaker
-    SessionMaker = sessionmaker(engine)
+    @classmethod
+    def find_by_id(cls, module_id):
+        return DBManager().session.query(ModuleInfo).get(int(module_id))
 
+    @classmethod
+    def all(cls):
+        return DBManager().session.query(ModuleInfo).all()
 
-def make_session():
-    if SessionMaker is None:
-        init_db()
-    return SessionMaker()
-
-
-def get_module_by_id(id):
-    session = make_session()
-    info = session.query(ModuleInfo).get(int(id))
-    session.close()
-    return info
-
-
-def add_module_info(name, source, user, version):
-    module = ModuleInfo(name, source, user, version)
-    session = make_session()
-    session.add(module)
-    session.commit()
-    session.close()
-
-
-def get_all_module_info():
-    session = make_session()
-    all_module_info = session.query(ModuleInfo).all()
-    session.close()
-    return all_module_info
-
-
-def delete_module_info(id):
-    session = make_session()
-    session.query(ModuleInfo).filter(ModuleInfo.id == id).delete()
-    session.commit()
-    session.close()
+DBManager().refresh_tables()
