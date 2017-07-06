@@ -47,11 +47,9 @@ class ModuleManager(QObject):
             self.data_fetched.emit(self.rthread.data)
         else:
             self.install(self.module_data)
-        print("thread is finished ya 5ara4yy")
 
     @pyqtSlot(dict)
     def download(self, module):
-        print("34an 5aaaaterrrr shimaaaaahahahahaaaaaaa2222")
         Logger().info(
             "Downloading {} v{}".format(
                 module["name"], module["latest_version"]["number"]
@@ -119,7 +117,7 @@ class ModuleManager(QObject):
         self.installation_finished.emit(int(self.module_data['id']))
 
     @pyqtSlot(int)
-    def uninstall(self, mod_id, for_update=True):
+    def uninstall(self, mod_id):
         info = ModuleInfo.find_by_id(mod_id)
         print(mod_id)
         print('{m}'.format(m=info))
@@ -135,8 +133,7 @@ class ModuleManager(QObject):
             Logger().err(ex)
 
         info.destroy()
-        if not(for_update):
-            self.uninstallation_finished.emit(info.id)
+        self.uninstallation_finished.emit(info.id)
         Logger().info("Unistalled module successfully")
         from alfred.nlp import Classifier
         Classifier().train()

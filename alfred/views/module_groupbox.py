@@ -98,7 +98,7 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
     @pyqtSlot(int)
     def uninstalled(self, mod_id):
         if int(self.module["id"]) == mod_id:
-            print("Gwa el if ")
+            self.pushButton_update.hide()
             self.pushButton_install.setText(InstallButtonState.INSTALL.value)
             self.pushButton_update.enabled = False
             self.labelInstalledVersion_2.setText("")

@@ -25,17 +25,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot(list)
     def list_modules(self, response):
         self.clear_listed_modules()
-        print("in list modules")
-        print(response)
         for module in response:
             print("{module}".format(module=module))
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
-            print("hoppaaa")
             item.signal_install.connect(ModuleManager.instance().download)
             item.signal_update.connect(ModuleManager.instance().update)
             item.signal_uninstall.connect(ModuleManager.instance().uninstall)
-            print("hopppaaa tany :D")
 
             ModuleManager.instance().installation_finished.connect(
                 item.installed_or_updated
@@ -44,7 +40,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 item.uninstalled
             )
         self.groupBoxError.hide()
-        print("5allast el module ya 5ara4yyyyyy ")
 
     @pyqtSlot()
     def handle_connection_error(self):
