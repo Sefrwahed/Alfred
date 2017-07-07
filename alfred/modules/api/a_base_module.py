@@ -3,6 +3,7 @@ import os
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 from jinja2 import Environment, FileSystemLoader
 
+from alfred import Logger
 from alfred.settings import Settings
 import alfred.modules.api.a_module_globals as amg
 
@@ -21,8 +22,12 @@ class ABaseModule(QThread):
                                      'data', 'settings.json')
         self.settings = Settings(settings_path)
 
-        amg.module_db_path = os.path.join(self.module_info.root(),
-                                          'data', 'db.sqlite')
+        data_dir_path = os.path.join(self.module_info.root(), 'data')
+        amg.module_db_path = os.path.join(data_dir_path, 'db.sqlite')
+
+        if not os.path.isdir(data_dir_path):
+            os.makedirs(data_dir_path)
+            Logger().info('Created new directory ' + data_dir_path)
 
         self.template_env = Environment(
             loader=FileSystemLoader(
