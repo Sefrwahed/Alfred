@@ -9,12 +9,14 @@ from alfred.alfred import Alfred
 
 
 def main():
-    app = QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
-    a = Alfred()
-    a.hide()
-    app.exec_()
-
+    try:
+        app = QApplication(sys.argv)
+        app.setQuitOnLastWindowClosed(False)
+        a = Alfred()
+        a.hide()
+        app.exec_()
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     main()

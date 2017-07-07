@@ -4,7 +4,6 @@
   <script>{% include "jquery.min.js" %}</script>
   <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
   <script>{% include "materialize.min.js" %}</script>
-  <script>{% include "toastr.js" %}</script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>{% include "materialize.css" %}</style>
   <style>{% include "toastr.css" %}</style>
@@ -89,10 +88,11 @@
         "hideEasing": "linear",
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
-      }
+      };
 
-      toastr['info']('Did you expect that? Click me if not')
+      toastr['info']('Did you expect that? Click me if not');
     });
   </script>
+  <script>{% include "toastr.js" %}</script>
 </body>
 </html>

@@ -35,6 +35,11 @@ class ModuleInfo(DBManager().DBModelBase):
                             'resources',
                             'training_sentences.json')
 
+    def extra_training_sentences_json_file_path(self):
+        return os.path.join(self.root(),
+                            'data',
+                            'training_sentences.json')
+
     def needed_entities(self):
         path = os.path.join(self.root(),
                             self.package_name(),

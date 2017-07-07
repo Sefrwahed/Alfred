@@ -41,6 +41,13 @@ class Classifier(metaclass=Singleton):
 
                 sentences.extend(m_sent)
                 targets.extend(len(m_sent) * [mi.id])
+                
+            if os.path.exists(mi.extra_training_sentences_json_file_path()):
+                with open(mi.extra_training_sentences_json_file_path()) as train_file:
+                    m_sent = json.load(train_file)
+
+                    sentences.extend(m_sent)
+                    targets.extend(len(m_sent) * [mi.id])
 
         return sentences, targets
 

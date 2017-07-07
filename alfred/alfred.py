@@ -1,5 +1,5 @@
 # Python builtins imports
-import sys
+import sys, json, os
 
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
 from PyQt5.QtGui import QIcon, QPixmap
@@ -118,9 +118,23 @@ class Alfred(QMainWindow):
         print(item, ok)
 
         if ok:
+            mi = modules[item]
+
+            sentences = []
+
+            with open(mi.extra_training_sentences_json_file_path(), 'r+') as extra_train_file:
+                sentences = json.load(extra_train_file)
+                sentences.append(self.curr_sentence)
+
+            with open(mi.extra_training_sentences_json_file_path(), 'w') as extra_train_file:
+                extra_train_file.write(json.dumps(sentences))
+                extra_train_file.truncate()
+
+            Classifier().train()
+
             self.main_widget.lineEdit.setText(self.curr_sentence)
             self.main_widget.showFullScreen()
-            self.set_module(modules[item])
+            self.set_module(mi)
 
     def set_module(self, module_info):
         if module_info.root() in sys.path:
