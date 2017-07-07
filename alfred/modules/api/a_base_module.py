@@ -45,12 +45,15 @@ class ABaseModule(QThread):
         self.callback_method_args = []
 
     def run(self):
-        if self.callback_method is None:
-            self.callback()
-            self.construct_view()
-            self.signal_view_changed.emit(self.components)
-        else:
-            self.callback_method(*self.callback_method_args)
+        try:
+            if self.callback_method is None:
+                self.callback()
+                self.construct_view()
+                self.signal_view_changed.emit(self.components)
+            else:
+                self.callback_method(*self.callback_method_args)
+        except Exception as e:
+            print(e)
 
     def callback(self):
         pass

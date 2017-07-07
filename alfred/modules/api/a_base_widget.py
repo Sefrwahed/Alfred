@@ -13,8 +13,11 @@ class ABaseWidget(QThread):
         self.title_on_image = False
 
     def run(self):
-        self.callback()
-        self.construct_view()
+        try:
+            self.callback()
+            self.construct_view()
+        except Exception as e:
+            Print(e)
 
     def callback(self):
         pass

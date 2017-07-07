@@ -29,7 +29,7 @@ sys.path.extend([os.path.join('alfred', 'modules', 'api')])
 user_home_path = os.path.expanduser("~")
 user_folder_name = "." + APP_NAME.lower()
 user_folder_path = os.path.join(user_home_path, user_folder_name)
-
+tmp_folder_path = os.path.join(user_folder_path, "tmp")
 
 def global_file_path(global_file):
     return os.path.join(user_folder_path, global_file)
@@ -53,6 +53,9 @@ sys.path.extend([modules_folder_path])
 
 if (not os.path.isdir(modules_folder_path)):
     os.makedirs(modules_folder_path)
+
+if (not os.path.isdir(tmp_folder_path)):
+    os.makedirs(tmp_folder_path)
 
 # Modules server
 host_url = 'http://alfredhub.herokuapp.com/'

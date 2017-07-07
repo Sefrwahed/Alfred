@@ -39,6 +39,14 @@ class Alfred(QMainWindow):
             self.main_window.handle_connection_error
         )
 
+        self.modules_mgr.signal_train.connect(
+            Classifier().train
+        )
+
+        Classifier().train_thread.finished.connect(
+            self.show_widgets_if_visible
+        )
+
         self.modules_mgr.data_fetched.connect(self.main_window.list_modules)
         self.curr_module = None
         self.widget_man = WidgetManager(self.main_widget)
@@ -87,15 +95,33 @@ class Alfred(QMainWindow):
 
     def show_main_widget(self):
         self.main_widget.lineEdit.setText("")
-        self.main_widget.clear_view()
-        self.main_widget.showFullScreen()
-        self.widget_man.prepare_widgets()
+        if Classifier().train_thread.isRunning():
+            self.main_widget.set_status_icon_busy(True)
+            self.main_widget.show_busy_state_widget()
+            self.main_widget.showFullScreen()
+        else:
+            self.main_widget.clear_view()
+            
+            if self.modules_mgr.modules_count == 0:
+                self.main_widget.show_no_modules_view()
+            else:
+                self.widget_man.prepare_widgets()
+
+            self.main_widget.showFullScreen()
+
+    def show_widgets_if_visible(self):
+        if self.main_widget.isVisible():
+            self.widget_man.prepare_widgets()
 
     def show_main_window(self):
         self.main_window.show()
 
     @pyqtSlot('QString')
     def process_text(self, text):
+        if Classifier().train_thread.isRunning():
+            self.main_widget.show_busy_state_widget()
+            return 
+
         self.curr_sentence = text
         self.main_widget.set_status_icon_busy(True)
 
@@ -104,6 +130,8 @@ class Alfred(QMainWindow):
 
         if not module_info:
             return
+
+        self.main_widget.show_module_running_widget(module_info.name)
 
         self.set_module(module_info)
 
@@ -117,9 +145,8 @@ class Alfred(QMainWindow):
                                      modules.keys(), 0, False);
         print(item, ok)
 
-        if ok:
-            mi = modules[item]
-
+        mi = modules[item]
+        if ok and self.curr_module.module_info.id != mi.id:
             sentences = []
 
             with open(mi.extra_training_sentences_json_file_path(), 'r+') as extra_train_file:
@@ -132,9 +159,10 @@ class Alfred(QMainWindow):
 
             Classifier().train()
 
-            self.main_widget.lineEdit.setText(self.curr_sentence)
+            self.show_main_widget()
+        else:
             self.main_widget.showFullScreen()
-            self.set_module(mi)
+            self.main_widget.lineEdit.setText(self.curr_sentence)
 
     def set_module(self, module_info):
         if module_info.root() in sys.path:

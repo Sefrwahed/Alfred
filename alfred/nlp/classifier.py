@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QThread
+
 import json
 import os
 import pickle
@@ -24,76 +26,19 @@ class Classifier(metaclass=Singleton):
     NO_MODULE = 0
 
     def __init__(self):
-        self.clf_path = os.path.join(ag.user_folder_path, ag.clf_file)
-
-        if os.path.exists(self.clf_path):
-            self.classifier = pickle.load(open(self.clf_path, "rb"))
-        else:
-            self.train()
-
-    def _collect_dataset(self):
-        all_info = ModuleInfo.all()
-        sentences = []
-        targets = []
-        for mi in all_info:
-            with open(mi.training_sentences_json_file_path()) as train_file:
-                m_sent = json.load(train_file)
-
-                sentences.extend(m_sent)
-                targets.extend(len(m_sent) * [mi.id])
-                
-            if os.path.exists(mi.extra_training_sentences_json_file_path()):
-                with open(mi.extra_training_sentences_json_file_path()) as train_file:
-                    m_sent = json.load(train_file)
-
-                    sentences.extend(m_sent)
-                    targets.extend(len(m_sent) * [mi.id])
-
-        return sentences, targets
+        self.train_thread = TrainingThread()
 
     def train(self):
-        Logger().info("Training started")
+        if self.train_thread.isRunning():
+            self.train_thread.terminate()
+            del self.train_thread
 
-        sentences, targets = self._collect_dataset()
-
-        n_targets = len(set(targets))
-        if n_targets < 2:
-            target = Classifier.NO_MODULE if n_targets == 0 else targets[0]
-            self.classifier = PseudoClassifier(target)
-            Logger().info('No training needed for less than 2 modules')
-        else:
-            preprocessor = Preprocessor(remove_stopwords=True)
-            vectorizer = TfidfVectorizer(tokenizer=identity,
-                                         lowercase=False,
-                                         preprocessor=None)
-            clf = SVC(kernel='linear', probability=True)
-            pipeline = Pipeline([
-                ('preprocessor', preprocessor),
-                ('vectorizer', vectorizer),
-                ('clf', clf),
-            ])
-
-            params = {
-                'preprocessor__lowercase': [True, False],
-                'vectorizer__ngram_range': [(1, n) for n in range(1, 4)],
-                'clf__C': np.logspace(-3, 0, 20),
-                'clf__gamma': np.logspace(-3, 1, 4),
-            }
-
-            grid_search = GridSearchCV(pipeline, params, n_jobs=-1, verbose=1)
-            grid_search.fit(sentences, targets)
-
-            error = 1 - grid_search.best_score_
-            Logger().info('Training Error = {err:0.2f}'.format(err=error * 100))
-            Logger().info('Best parameters: ' + str(grid_search.best_params_))
-
-            self.classifier = grid_search.best_estimator_
-
-        pickle.dump(self.classifier, open(self.clf_path, "wb"))
-        Logger().info("Training ended")
+        self.train_thread = TrainingThread()
+        if not self.train_thread.isRunning():
+            self.train_thread.start()
 
     def predict(self, sent):
-        module_id = self.classifier.predict([sent])[0]
+        module_id = self.train_thread.classifier.predict([sent])[0]
         Logger().info("Predicted module with id {}".format(module_id))
         return module_id
 
@@ -149,3 +94,75 @@ class Preprocessor(BaseEstimator, TransformerMixin):
             wn_tag = pos_to_wn[pos_tag[0]]
 
         return self.lemmatizer.lemmatize(token, wn_tag)
+
+class TrainingThread(QThread):
+    classifier = None
+    clf_path = os.path.join(ag.user_folder_path, ag.clf_file)
+    
+    def __init__(self):
+        QThread.__init__(self)
+        if os.path.exists(self.clf_path):
+            self.classifier = pickle.load(open(self.clf_path, "rb"))
+        else:
+            self.start()
+
+    def _collect_dataset(self):
+        all_info = ModuleInfo.all()
+        sentences = []
+        targets = []
+        for mi in all_info:
+            with open(mi.training_sentences_json_file_path()) as train_file:
+                m_sent = json.load(train_file)
+
+                sentences.extend(m_sent)
+                targets.extend(len(m_sent) * [mi.id])
+                
+            if os.path.exists(mi.extra_training_sentences_json_file_path()):
+                with open(mi.extra_training_sentences_json_file_path()) as train_file:
+                    m_sent = json.load(train_file)
+
+                    sentences.extend(m_sent)
+                    targets.extend(len(m_sent) * [mi.id])
+
+        return sentences, targets
+
+    def run(self):
+        Logger().info("Training started")
+
+        sentences, targets = self._collect_dataset()
+
+        n_targets = len(set(targets))
+        if n_targets < 2:
+            target = Classifier.NO_MODULE if n_targets == 0 else targets[0]
+            self.classifier = PseudoClassifier(target)
+            Logger().info('No training needed for less than 2 modules')
+        else:
+            preprocessor = Preprocessor(remove_stopwords=True)
+            vectorizer = TfidfVectorizer(tokenizer=identity,
+                                         lowercase=False,
+                                         preprocessor=None)
+            clf = SVC(kernel='linear', probability=True)
+            pipeline = Pipeline([
+                ('preprocessor', preprocessor),
+                ('vectorizer', vectorizer),
+                ('clf', clf),
+            ])
+
+            params = {
+                'preprocessor__lowercase': [True, False],
+                'vectorizer__ngram_range': [(1, n) for n in range(1, 4)],
+                'clf__C': np.logspace(-3, 0, 20),
+                'clf__gamma': np.logspace(-3, 1, 4),
+            }
+
+            grid_search = GridSearchCV(pipeline, params, n_jobs=-1, verbose=1)
+            grid_search.fit(sentences, targets)
+
+            error = 1 - grid_search.best_score_
+            Logger().info('Training Error = {err:0.2f}'.format(err=error * 100))
+            Logger().info('Best parameters: ' + str(grid_search.best_params_))
+
+            self.classifier = grid_search.best_estimator_
+
+        pickle.dump(self.classifier, open(self.clf_path, "wb"))
+        Logger().info("Training ended")

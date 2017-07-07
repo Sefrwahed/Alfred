@@ -60,21 +60,31 @@ class ModuleInfo(DBManager().DBModelBase):
         return "".join(w.title() for w in self.package_name().split("_"))
 
     def create(self):
-        DBManager().session.add(self)
-        DBManager().session.commit()
+        session = DBManager().session()
+        session.add(self)
+        session.commit()
+        session.close()
 
     def destroy(self):
-        DBManager().session.query(ModuleInfo).filter(
+        session = DBManager().session()
+        session.query(ModuleInfo).filter(
             ModuleInfo.id == self.id
         ).delete()
-        DBManager().session.commit()
+        session.commit()
+        session.close()
 
     @classmethod
     def find_by_id(cls, module_id):
-        return DBManager().session.query(ModuleInfo).get(int(module_id))
+        session = DBManager().session()
+        mi = session.query(ModuleInfo).get(int(module_id))
+        session.close()
+        return mi
 
     @classmethod
     def all(cls):
-        return DBManager().session.query(ModuleInfo).all()
+        session = DBManager().session()
+        all_info = session.query(ModuleInfo).all()
+        session.close()
+        return all_info
 
 DBManager().refresh_tables()

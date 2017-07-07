@@ -7,6 +7,7 @@ from PyQt5.QtWebChannel import QWebChannel
 from .ui.widget_ui import Ui_Dialog
 from alfred import data_rc
 import alfred.alfred_globals as ag
+from alfred.modules.api.view_components import ARow, AColumn, ACard, AHeading
 
 
 class MainWidget(QDialog, Ui_Dialog):
@@ -33,6 +34,21 @@ class MainWidget(QDialog, Ui_Dialog):
             self.bot_status_icon.page().runJavaScript("document.getElementById('inner').style.width = '0px';")
         else:
             self.bot_status_icon.page().runJavaScript("document.getElementById('inner').style.width = '20px';")
+
+    def show_busy_state_widget(self):
+        self.show_special_widget("Please wait...", "Alfred is busy learning at the moment :D")
+
+    def show_module_running_widget(self, module_name):
+        self.show_special_widget("Module is running, Please wait...", "{} moduel is predicted".format(module_name.capitalize()))
+
+    def show_no_modules_view(self):
+        self.show_special_widget("Please install some modules", "No modules found :(")
+
+    def show_special_widget(self, title, content, color=''):
+        temp = ag.main_components_env.get_template("widgets.html")
+        components = [ARow(AColumn(12, ACard(title, AHeading(3, content,color=color))))]
+        html = temp.render(componenets=components)
+        self.webView.page().setHtml(html)
 
     @pyqtSlot()
     def send_text(self):

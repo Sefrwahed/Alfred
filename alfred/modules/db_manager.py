@@ -13,13 +13,12 @@ class DBManager(metaclass=Singleton):
 
     def __init__(self):
         filepath = os.path.join(ag.user_folder_path, ag.db_name)
-        engine = create_engine('sqlite:///{}'.format(filepath))
-        self.DBModelBase.metadata.bind = engine
+        self.engine = create_engine('sqlite:///{}'.format(filepath))
+        self.DBModelBase.metadata.bind = self.engine
         self.refresh_tables()
-        self.session = sessionmaker(engine)()
+
+    def session(self):
+        return sessionmaker(self.engine)()
 
     def refresh_tables(self):
         self.DBModelBase.metadata.create_all()
-
-    def __del__(self):
-        self.session.close()
