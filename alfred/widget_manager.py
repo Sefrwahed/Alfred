@@ -27,7 +27,6 @@ class WidgetManager(QObject):
     def widgets_container_loaded(self):
         for m in ModuleInfo.all():
             if not os.path.exists(os.path.join(m.root(), m.package_name(), "{}_widget.py".format(m.package_name()))):
-                print(os.path.join(m.root(), m.package_name(), "{}_widget.py".format(m.package_name())))
                 continue
 
             amg.module_db_path = os.path.join(m.root(), 'data', 'db.sqlite')

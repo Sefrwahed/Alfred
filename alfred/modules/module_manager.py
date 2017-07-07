@@ -1,13 +1,10 @@
-import os
-import shutil
-import zipfile
+import os, shutil, zipfile, random
 
 # Qt imports
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 # Local imports
 from alfred import alfred_globals as ag
-# from alfred.nlp.classifier import Classifier
 from . import RequestThread
 from .module_info import ModuleInfo
 from alfred.logger import Logger
@@ -23,12 +20,15 @@ class ModuleManager(QObject):
     conn_err = pyqtSignal()
     installation_finished = pyqtSignal(int)
     uninstallation_finished = pyqtSignal(int)
+    signal_train = pyqtSignal()
     update_flag = False
+    modules_count = len(ModuleInfo.all())
 
     @classmethod
     def instance(cls):
         if cls._instance is None:
             cls._instance = cls()
+            cls._instance.update_flag = False
 
         return cls._instance
 
@@ -113,18 +113,27 @@ class ModuleManager(QObject):
         info = ModuleInfo(mod_id, name, source, username, version)
         info.create()
 
-        from alfred.nlp import Classifier
-        Classifier().train()
+        if self.update_flag:
+            shutil.copytree(self.data_backup_path, os.path.join(info.root(), "data"))
+            shutil.rmtree(self.data_backup_path)
+            self.update_flag = False
+        else:
+            shutil.copytree(
+                os.path.join(os.path.dirname(__file__), "default_data_folder"), 
+                os.path.join(install_dir, "data")
+            )
+        
         self.installation_finished.emit(int(self.module_data['id']))
+        self.modules_count += 1
+        self.signal_train.emit()
 
     @pyqtSlot(int)
-    def uninstall(self, mod_id):
+    def uninstall(self, mod_id, retrain=True):
         info = ModuleInfo.find_by_id(mod_id)
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
-        module_folder_path = os.path.join(ag.modules_folder_path,
-                                          info.source, info.user, info.name)
+        module_folder_path = info.root()
 
         try:
             shutil.rmtree(module_folder_path)
@@ -134,12 +143,24 @@ class ModuleManager(QObject):
         info.destroy()
         self.uninstallation_finished.emit(info.id)
         Logger().info("Unistalled module successfully")
-        from alfred.nlp import Classifier
-        Classifier().train()
+        self.modules_count -= 1
+        if retrain:
+            self.signal_train.emit()
 
     @pyqtSlot(dict)
     def update(self, mod_data):
-        self.update_flag = True
-        self.uninstall(mod_data["id"])
-        self.download(mod_data)
-        self.update_flag = False
+        # backing up data folder
+        try:
+            info = ModuleInfo.find_by_id(mod_data["id"])
+            random_folder_name = "tmp_{}".format(random.randint(1, 1000000000000))
+            self.data_backup_path = os.path.join(ag.tmp_folder_path, random_folder_name)
+            data_path = os.path.join(info.root(), "data")
+            shutil.copytree(data_path, self.data_backup_path)
+            
+            # updating
+            self.update_flag = True
+            self.uninstall(mod_data["id"], False)
+            self.download(mod_data)
+
+        except Exception as ex:
+            Logger().err(ex)
