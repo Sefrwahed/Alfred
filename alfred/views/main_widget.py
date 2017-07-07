@@ -22,7 +22,7 @@ class MainWidget(QDialog, Ui_Dialog):
 
         self.channel = QWebChannel(self.webView.page())
         self.webView.page().setWebChannel(self.channel)
-
+        self.bridge_obj = bridge_obj
         self.channel.registerObject("web_bridge", bridge_obj)
 
     def clear_view(self):
@@ -40,6 +40,13 @@ class MainWidget(QDialog, Ui_Dialog):
         if msg != '':
             self.text_changed.emit(msg)
             self.last_text = msg
+
+    @pyqtSlot(list)
+    def set_widget_view(self, components):
+        temp = ag.main_components_env.get_template("widgets.html")
+        html = temp.render(componenets=components)
+        # print(html)
+        self.webView.page().setHtml(html)
 
     @pyqtSlot(list)
     def set_view(self, components):

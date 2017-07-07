@@ -4,8 +4,9 @@
   <script>{% include "jquery.min.js" %}</script>
   <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
   <script>{% include "materialize.min.js" %}</script>
-   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>{% include "materialize.css" %}</style>
+  <style>{% include "toastr.css" %}</style>
   <!--<style>html { color: #f5f5f5 }</style>-->
 </head>
 <body>
@@ -37,7 +38,8 @@
     })($.fn.attr);
 
     $(document).ready(function(){
-      new QWebChannel(qt.webChannelTransport, function(channel){
+
+      var channel = new QWebChannel(qt.webChannelTransport, function(channel){
         $(".container").on("click change", "*", function(e) {
           channel.objects.web_bridge.broadcast_event(
             $(this).prop("tagName").toLowerCase(),
@@ -66,8 +68,31 @@
 
           channel.objects.web_bridge.form_submitted($(this).attr("id"), JSON.stringify(vals_obj));
         });
+
+        
       });
+
+      toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": true,
+        "onclick": function() { channel.objects.web_bridge.feedback_toast_clicked() },
+        "showDuration": "500",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      };
+
+      toastr['info']('Did you expect that? Click me if not');
     });
   </script>
+  <script>{% include "toastr.js" %}</script>
 </body>
 </html>
