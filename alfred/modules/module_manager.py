@@ -22,6 +22,7 @@ class ModuleManager(QObject):
     conn_err = pyqtSignal()
     installation_finished = pyqtSignal(int)
     uninstallation_finished = pyqtSignal(int)
+    update_flag = False
 
     @classmethod
     def instance(cls):
@@ -119,8 +120,6 @@ class ModuleManager(QObject):
     @pyqtSlot(int)
     def uninstall(self, mod_id):
         info = ModuleInfo.find_by_id(mod_id)
-        print(mod_id)
-        print('{m}'.format(m=info))
         Logger().info("Uninstalling module {} v{}".format(
             info.name, info.version
         ))
@@ -140,5 +139,8 @@ class ModuleManager(QObject):
 
     @pyqtSlot(dict)
     def update(self, mod_data):
+        self.update_flag = True
         self.uninstall(mod_data["id"])
         self.download(mod_data)
+        self.update_flag = False
+

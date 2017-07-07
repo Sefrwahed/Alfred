@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal
 
 from .ui.moduleGroupBox_ui import Ui_GroupBox
 from alfred.modules import ModuleInfo
+from alfred.modules import ModuleManager
 
 
 class InstallButtonState(Enum):
@@ -47,12 +48,12 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.labelName_2.setText(self.name)
         self.labelDesc_2.setText(self.module["description"])
         self.labelLicense_2.setText(self.module["license"])
-        self.labelVersion_2.setText(latest_version)
+        self.labelVersion_2.setText("Latest version: "+ latest_version)
 
         installed_module = ModuleInfo.find_by_id(self.module["id"])
 
         if installed_module is not None:
-            self.labelInstalledVersion_2.setText(installed_module.version)
+            self.labelInstalledVersion_2.setText("Current version: "+ installed_module.version)
             self.installButtonState = InstallButtonState.UNINSTALL
             self.pushButton_update.show()
             self.pushButton_install.setText(InstallButtonState.UNINSTALL.value)
@@ -87,19 +88,21 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.pushButton_update.enabled = False
         self.signal_update.emit(self.module)
 
+
     @pyqtSlot(int)
     def installed_or_updated(self, id):
         if int(self.module["id"]) == id:
             self.pushButton_install.setText(InstallButtonState.UNINSTALL.value)
             self.pushButton_update.setText(UpdateButtonState.UPTODATE.value)
-            self.labelInstalledVersion_2.setText(self.module["latest_version"]["number"])
+            self.labelInstalledVersion_2.setText("Current version: "+ self.module["latest_version"]["number"])
             self.installButtonState = InstallButtonState.UNINSTALL
 
     @pyqtSlot(int)
     def uninstalled(self, mod_id):
         if int(self.module["id"]) == mod_id:
             self.pushButton_update.hide()
-            self.pushButton_install.setText(InstallButtonState.INSTALL.value)
+            if not(ModuleManager.instance().update_flag):
+                self.pushButton_install.setText(InstallButtonState.INSTALL.value)
             self.pushButton_update.enabled = False
             self.labelInstalledVersion_2.setText("")
             self.installButtonState = InstallButtonState.INSTALL

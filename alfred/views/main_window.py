@@ -26,7 +26,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def list_modules(self, response):
         self.clear_listed_modules()
         for module in response:
-            print("{module}".format(module=module))
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
             item.signal_install.connect(ModuleManager.instance().download)
