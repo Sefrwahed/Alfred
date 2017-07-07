@@ -57,17 +57,26 @@ class Ui_GroupBox(object):
         self.labelDesc_2.setObjectName("labelDesc_2")
         self.verticalLayout_2.addWidget(self.labelDesc_2)
         self.labelVersion_2 = QtWidgets.QLabel(GroupBox)
+        self.labelInstalledVersion_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.labelVersion_2.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.labelInstalledVersion_2.sizePolicy().hasHeightForWidth())
         self.labelVersion_2.setSizePolicy(sizePolicy)
+        self.labelInstalledVersion_2.setSizePolicy(sizePolicy)
         self.labelVersion_2.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0);\n"
 "    color: rgb(243, 243, 243);\n"
 "}")
+        self.labelInstalledVersion_2.setStyleSheet("QLabel{\n"
+                                          "    background-color: rgba(0, 0, 0, 0);\n"
+                                          "    color: rgb(243, 243, 243);\n"
+                                          "}")
         self.labelVersion_2.setObjectName("labelVersion_2")
+        self.labelInstalledVersion_2.setObjectName("labelInstalledVersion_2")
         self.verticalLayout_2.addWidget(self.labelVersion_2)
+        self.verticalLayout_2.addWidget(self.labelInstalledVersion_2)
         self.labelLicense_2 = QtWidgets.QLabel(GroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -81,11 +90,15 @@ class Ui_GroupBox(object):
         self.labelLicense_2.setObjectName("labelLicense_2")
         self.verticalLayout_2.addWidget(self.labelLicense_2)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        self.pushButton = QtWidgets.QPushButton(GroupBox)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.pushButton_install = QtWidgets.QPushButton(GroupBox)
+        self.pushButton_update = QtWidgets.QPushButton(GroupBox)
+        self.pushButton_update.setObjectName("pushButton_update")
+        self.pushButton_install.setObjectName("pushButton_install")
+        self.horizontalLayout.addWidget(self.pushButton_install)
+        self.horizontalLayout.addWidget(self.pushButton_update)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
-        self.pushButton.raise_()
+        self.pushButton_install.raise_()
+        self.pushButton_update.raise_()
 
         self.retranslateUi(GroupBox)
         QtCore.QMetaObject.connectSlotsByName(GroupBox)
@@ -97,5 +110,6 @@ class Ui_GroupBox(object):
         self.labelDesc_2.setText(_translate("GroupBox", "TextLabel"))
         self.labelVersion_2.setText(_translate("GroupBox", "TextLabel"))
         self.labelLicense_2.setText(_translate("GroupBox", "TextLabel"))
-        self.pushButton.setText(_translate("GroupBox", "Install"))
+        self.pushButton_install.setText(_translate("GroupBox", "Install"))
+        self.pushButton_update.setText(_translate("GroupBox", "Update"))
 

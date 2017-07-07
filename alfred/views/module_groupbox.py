@@ -9,13 +9,16 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from .ui.moduleGroupBox_ui import Ui_GroupBox
 from alfred.modules import ModuleInfo
 from alfred.modules import ModuleManager
-from alfred.logger import Logger
 
 
-class ButtonState(Enum):
+class InstallButtonState(Enum):
     UNINSTALL = "Uninstall"
     INSTALL = "Install"
+
+
+class UpdateButtonState(Enum):
     UPDATE = "Update"
+    UPTODATE = "UpToDate"
 
 
 class ModuleGroupBox(QGroupBox, Ui_GroupBox):
@@ -26,13 +29,14 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
     def __init__(self, module_info):
         QGroupBox.__init__(self)
         self.setupUi(self)
-        self.buttonState = None
+        self.installButtonState = None
         self.name = None
 
         self.module = module_info
         self.set_data()
 
-        self.pushButton.clicked.connect(self.click_action)
+        self.pushButton_install.clicked.connect(self.install_click_action)
+        self.pushButton_update.clicked.connect(self.update_click_action)
 
     def set_data(self):
         self.name = self.module["name"]
@@ -44,48 +48,61 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.labelName_2.setText(self.name)
         self.labelDesc_2.setText(self.module["description"])
         self.labelLicense_2.setText(self.module["license"])
-        self.labelVersion_2.setText(latest_version)
+        self.labelVersion_2.setText("Latest version: "+ latest_version)
 
         installed_module = ModuleInfo.find_by_id(self.module["id"])
+
         if installed_module is not None:
+            self.labelInstalledVersion_2.setText("Current version: "+ installed_module.version)
+            self.installButtonState = InstallButtonState.UNINSTALL
+            self.pushButton_update.show()
+            self.pushButton_install.setText(InstallButtonState.UNINSTALL.value)
+
             if installed_module.version == latest_version:
-                self.pushButton.setText(ButtonState.UNINSTALL.value)
-                self.buttonState = ButtonState.UNINSTALL
+                self.pushButton_update.setText(UpdateButtonState.UPTODATE.value)
+                self.pushButton_update.hide()
 
             else:
-                self.pushButton.setText(ButtonState.UPDATE.value)
-                self.buttonState = ButtonState.UPDATE
-        else:
-            self.buttonState = ButtonState.INSTALL
+                self.pushButton_update.setText(UpdateButtonState.UPDATE.value)
+                self.pushButton_update.show()
 
-    def click_action(self):
-        if self.buttonState == ButtonState.INSTALL:
-            self.pushButton.setText("installing..")
-            self.pushButton.enabled = False
+        else:
+            self.labelInstalledVersion_2.setText("")
+            self.installButtonState = InstallButtonState.INSTALL
+            self.pushButton_update.hide()
+            self.pushButton_install.setText(InstallButtonState.INSTALL.value)
+
+    def install_click_action(self):
+        if self.installButtonState == InstallButtonState.INSTALL:
+            self.pushButton_install.setText("installing..")
+            self.pushButton_install.enabled = False
             self.signal_install.emit(self.module)
 
-        elif self.buttonState == ButtonState.UPDATE:
-            ModuleManager.instance().update(self.module)
-
-        elif self.buttonState == ButtonState.UNINSTALL:
+        elif self.installButtonState == InstallButtonState.UNINSTALL:
+            self.pushButton_install.setText("uninstalling..")
+            self.pushButton_install.enabled = False
             self.signal_uninstall.emit(self.module["id"])
 
-    @pyqtSlot(int)
-    def installed(self, id):
-        if int(self.module["id"]) == id:
-            self.pushButton.setText(ButtonState.UNINSTALL.value)
-            self.buttonState = ButtonState.UNINSTALL
+    def update_click_action(self):
+        self.pushButton_update.setText("updating..")
+        self.pushButton_update.enabled = False
+        self.signal_update.emit(self.module)
+
 
     @pyqtSlot(int)
-    def uninstalled(self, id):
+    def installed_or_updated(self, id):
         if int(self.module["id"]) == id:
-            self.pushButton.setText(ButtonState.INSTALL.value)
-            self.buttonState = ButtonState.INSTALL
+            self.pushButton_install.setText(InstallButtonState.UNINSTALL.value)
+            self.pushButton_update.setText(UpdateButtonState.UPTODATE.value)
+            self.labelInstalledVersion_2.setText("Current version: "+ self.module["latest_version"]["number"])
+            self.installButtonState = InstallButtonState.UNINSTALL
 
-    # def uninstall(self):
-        # logger.info("uninstalled " + self.name + " module")
-
-    # def update(self):
-        # logger.info("updated " + self.name + " module")
-        # self.pushButton.setText(ButtonState.UNINSTALL.value)
-        # self.buttonState = ButtonState.UNINSTALL
+    @pyqtSlot(int)
+    def uninstalled(self, mod_id):
+        if int(self.module["id"]) == mod_id:
+            self.pushButton_update.hide()
+            if not(ModuleManager.instance().update_flag):
+                self.pushButton_install.setText(InstallButtonState.INSTALL.value)
+            self.pushButton_update.enabled = False
+            self.labelInstalledVersion_2.setText("")
+            self.installButtonState = InstallButtonState.INSTALL

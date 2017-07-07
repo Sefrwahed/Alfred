@@ -25,21 +25,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot(list)
     def list_modules(self, response):
         self.clear_listed_modules()
-
         for module in response:
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
-
             item.signal_install.connect(ModuleManager.instance().download)
+            item.signal_update.connect(ModuleManager.instance().update)
             item.signal_uninstall.connect(ModuleManager.instance().uninstall)
 
             ModuleManager.instance().installation_finished.connect(
-                item.installed
+                item.installed_or_updated
             )
             ModuleManager.instance().uninstallation_finished.connect(
                 item.uninstalled
             )
-
         self.groupBoxError.hide()
 
     @pyqtSlot()
