@@ -18,11 +18,14 @@ class ModuleManager(QObject):
     module_data = None
     data_fetched = pyqtSignal(list)
     conn_err = pyqtSignal()
+    update_started = pyqtSignal(int)
+    installation_started = pyqtSignal(int)
     installation_finished = pyqtSignal(int)
     uninstallation_finished = pyqtSignal(int)
     signal_train = pyqtSignal()
     update_flag = False
     modules_count = len(ModuleInfo.all())
+
 
     @classmethod
     def instance(cls):
@@ -52,6 +55,7 @@ class ModuleManager(QObject):
 
     @pyqtSlot(dict)
     def download(self, module):
+        self.installation_started.emit(int(module['id']))
         Logger().info(
             "Downloading {} v{}".format(
                 module["name"], module["latest_version"]["number"]
@@ -158,9 +162,11 @@ class ModuleManager(QObject):
             shutil.copytree(data_path, self.data_backup_path)
             
             # updating
+            self.update_started.emit(int(mod_data['id']))
             self.update_flag = True
             self.uninstall(mod_data["id"], False)
             self.download(mod_data)
+            self.update_flag = False
 
         except Exception as ex:
             Logger().err(ex)

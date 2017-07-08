@@ -28,6 +28,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for module in response:
             item = ModuleGroupBox(module)
             self.verticalLayout_inner.addWidget(item, alignment=Qt.AlignTop)
+
+            ModuleManager.instance().installation_started.connect(
+                item.disable_btns
+            )
+            ModuleManager.instance().update_started.connect(
+                item.disable_btns
+            )
             item.signal_install.connect(ModuleManager.instance().download)
             item.signal_update.connect(ModuleManager.instance().update)
             item.signal_uninstall.connect(ModuleManager.instance().uninstall)

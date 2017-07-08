@@ -88,7 +88,6 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         self.pushButton_update.enabled = False
         self.signal_update.emit(self.module)
 
-
     @pyqtSlot(int)
     def installed_or_updated(self, id):
         if int(self.module["id"]) == id:
@@ -96,6 +95,9 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
             self.pushButton_update.setText(UpdateButtonState.UPTODATE.value)
             self.labelInstalledVersion_2.setText("Current version: "+ self.module["latest_version"]["number"])
             self.installButtonState = InstallButtonState.UNINSTALL
+        else:
+            self.pushButton_install.setEnabled(True)
+            self.pushButton_update.setEnabled(True)
 
     @pyqtSlot(int)
     def uninstalled(self, mod_id):
@@ -106,3 +108,9 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
             self.pushButton_update.enabled = False
             self.labelInstalledVersion_2.setText("")
             self.installButtonState = InstallButtonState.INSTALL
+
+    @pyqtSlot(int)
+    def disable_btns(self, id):
+        if not(int(self.module["id"]) == id):
+            self.pushButton_install.setEnabled(False)
+            self.pushButton_update.setEnabled(False)
