@@ -117,7 +117,7 @@ class ModuleManager(QObject):
         info.create()
 
         if self.update_flag:
-            shutil.copytree(self.data_backup_path, os.path.join(info.root(), "data"))
+            shutil.copytree(self.data_backup_path, os.path.join(install_dir, "data"))
             shutil.rmtree(self.data_backup_path)
             self.update_flag = False
         else:
