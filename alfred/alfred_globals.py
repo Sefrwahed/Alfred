@@ -1,6 +1,5 @@
 # Python builtins imports
-import os
-import sys
+import os, sys, shutil
 
 # Libs imports
 from jinja2 import Environment, FileSystemLoader
@@ -56,6 +55,13 @@ if (not os.path.isdir(modules_folder_path)):
 
 if (not os.path.isdir(tmp_folder_path)):
     os.makedirs(tmp_folder_path)
+
+# nltk data
+if (not os.path.isdir(os.path.join(user_home_path, "nltk_data"))):
+    shutil.copytree(
+        os.path.join(os.path.dirname(__file__), "nltk_data"), 
+        os.path.join(user_home_path, "nltk_data")
+    )
 
 # Modules server
 host_url = 'http://alfredhub.herokuapp.com/'
