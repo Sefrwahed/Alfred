@@ -17,7 +17,7 @@ class ABaseWidget(QThread):
             self.callback()
             self.construct_view()
         except Exception as e:
-            Print(e)
+            print(e)
 
     def callback(self):
         pass

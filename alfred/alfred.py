@@ -29,6 +29,7 @@ class Alfred(QMainWindow):
         self.main_widget.text_changed.connect(self.process_text)
 
         self.main_window = MainWindow()
+        self.main_window.setWindowIcon(QIcon(":/icon_alfred"))
         self.modules_mgr = ModuleManager.instance()
 
         self.main_window.signal_list_modules.connect(
@@ -82,7 +83,7 @@ class Alfred(QMainWindow):
         tray_icon_menu.addSeparator()
         tray_icon_menu.addAction(self.quit_action)
 
-        self.tray_icon = QSystemTrayIcon(QIcon(':/icon_heart'), self)
+        self.tray_icon = QSystemTrayIcon(QIcon(":/icon_alfred"), self)
         self.tray_icon.setContextMenu(tray_icon_menu)
         self.tray_icon.show()
         self.tray_icon.showMessage('Alfred', 'I am alive',
