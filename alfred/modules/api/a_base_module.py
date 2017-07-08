@@ -18,16 +18,15 @@ class ABaseModule(QThread):
         self.components = []
         self.module_info = module_info
 
-        settings_path = os.path.join(self.module_info.root(),
-                                     'data', 'settings.json')
-        self.settings = Settings(settings_path)
-
         data_dir_path = os.path.join(self.module_info.root(), 'data')
         amg.module_db_path = os.path.join(data_dir_path, 'db.sqlite')
 
         if not os.path.isdir(data_dir_path):
             os.makedirs(data_dir_path)
             Logger().info('Created new directory ' + data_dir_path)
+
+        settings_path = os.path.join(data_dir_path, 'settings.json')
+        self.settings = Settings(settings_path)
 
         self.template_env = Environment(
             loader=FileSystemLoader(
