@@ -149,7 +149,6 @@ class TrainingThread(QThread):
                 'preprocessor__lowercase': [True, False],
                 'vectorizer__ngram_range': [(1, n) for n in range(1, 4)],
                 'clf__C': np.logspace(-3, 0, 20),
-                'clf__gamma': np.logspace(-3, 1, 4),
             }
 
             grid_search = GridSearchCV(pipeline, params, n_jobs=-1, verbose=1)

@@ -41,7 +41,7 @@ class MainWidget(QDialog, Ui_Dialog):
         self.show_special_widget("Please wait...", "Alfred is busy learning at the moment :D")
 
     def show_module_running_widget(self, module_name):
-        self.show_special_widget("Module is running, Please wait...", "{} moduel is predicted".format(module_name.capitalize()))
+        self.show_special_widget("Module is running, Please wait...", "{} module is predicted".format(module_name.capitalize()))
 
     def show_no_modules_view(self):
         self.show_special_widget("Please install some modules", "No modules found :(")
