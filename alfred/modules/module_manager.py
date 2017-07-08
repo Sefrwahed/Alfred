@@ -20,6 +20,8 @@ class ModuleManager(QObject):
     module_data = None
     data_fetched = pyqtSignal(list)
     conn_err = pyqtSignal()
+    update_started = pyqtSignal(int)
+    installation_started = pyqtSignal(int)
     installation_finished = pyqtSignal(int)
     uninstallation_finished = pyqtSignal(int)
     update_flag = False
@@ -51,6 +53,7 @@ class ModuleManager(QObject):
 
     @pyqtSlot(dict)
     def download(self, module):
+        self.installation_started.emit(int(module['id']))
         Logger().info(
             "Downloading {} v{}".format(
                 module["name"], module["latest_version"]["number"]
@@ -139,6 +142,7 @@ class ModuleManager(QObject):
 
     @pyqtSlot(dict)
     def update(self, mod_data):
+        self.update_started.emit(int(mod_data['id']))
         self.update_flag = True
         self.uninstall(mod_data["id"])
         self.download(mod_data)
