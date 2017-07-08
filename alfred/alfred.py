@@ -147,13 +147,16 @@ class Alfred(QMainWindow):
 
         mi = modules[item]
         if ok and self.curr_module.module_info.id != mi.id:
+            extra_train_file_path = mi.extra_training_sentences_json_file_path()
+
             sentences = []
+            if os.path.exists(extra_train_file_path):
+                with open(extra_train_file_path, 'r+') as extra_train_file:
+                    sentences = json.load(extra_train_file)
 
-            with open(mi.extra_training_sentences_json_file_path(), 'r+') as extra_train_file:
-                sentences = json.load(extra_train_file)
-                sentences.append(self.curr_sentence)
+            sentences.append(self.curr_sentence)
 
-            with open(mi.extra_training_sentences_json_file_path(), 'w') as extra_train_file:
+            with open(extra_train_file_path, 'w') as extra_train_file:
                 extra_train_file.write(json.dumps(sentences))
                 extra_train_file.truncate()
 

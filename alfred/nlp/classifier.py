@@ -95,10 +95,11 @@ class Preprocessor(BaseEstimator, TransformerMixin):
 
         return self.lemmatizer.lemmatize(token, wn_tag)
 
+
 class TrainingThread(QThread):
     classifier = None
     clf_path = os.path.join(ag.user_folder_path, ag.clf_file)
-    
+
     def __init__(self):
         QThread.__init__(self)
         if os.path.exists(self.clf_path):
@@ -111,15 +112,11 @@ class TrainingThread(QThread):
         sentences = []
         targets = []
         for mi in all_info:
-            with open(mi.training_sentences_json_file_path()) as train_file:
-                m_sent = json.load(train_file)
-
-                sentences.extend(m_sent)
-                targets.extend(len(m_sent) * [mi.id])
-                
-            if os.path.exists(mi.extra_training_sentences_json_file_path()):
-                with open(mi.extra_training_sentences_json_file_path()) as train_file:
-                    m_sent = json.load(train_file)
+            for file_path in [mi.training_sentences_json_file_path(),
+                              mi.extra_training_sentences_json_file_path()]:
+                if os.path.exists(file_path):
+                    with open(file_path) as train_file:
+                        m_sent = json.load(train_file)
 
                     sentences.extend(m_sent)
                     targets.extend(len(m_sent) * [mi.id])
