@@ -13,7 +13,7 @@ class ABaseModule(QThread):
     signal_append_content = pyqtSignal(str, str)
     signal_remove_component = pyqtSignal(str)
 
-    def __init__(self, module_info, entities={}):
+    def __init__(self, module_info, entities):
         QThread.__init__(self)
         self.components = []
         self.module_info = module_info
@@ -42,6 +42,8 @@ class ABaseModule(QThread):
         self.html = ''
         self.callback_method = None
         self.callback_method_args = []
+
+        self.entities = entities
 
     def run(self):
         try:

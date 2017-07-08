@@ -134,8 +134,16 @@ class Alfred(QMainWindow):
 
         self.main_widget.show_module_running_widget(module_info.name)
 
-        self.set_module(module_info)
+        entities_dict = {}
+        try:
+            needed_entities = module_info.needed_entities()
+            Parser([]).set_entities_types(needed_entities)
+            entities_dict = Parser([]).parse(text)
+        except:
+            Logger().err('Could not extract named entities')
+        Logger().info("Extracted Entities are {}".format(entities_dict))
 
+        self.set_module(module_info, entities_dict)
         self.main_widget.set_status_icon_busy(False)
 
     @pyqtSlot()
@@ -168,7 +176,7 @@ class Alfred(QMainWindow):
             self.main_widget.showFullScreen()
             self.main_widget.lineEdit.setText(self.curr_sentence)
 
-    def set_module(self, module_info):
+    def set_module(self, module_info, entities_dict):
         if module_info.root() in sys.path:
             sys.path.remove(module_info.root())
         sys.path.append(module_info.root())
@@ -181,17 +189,9 @@ class Alfred(QMainWindow):
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
             self.web_bridge.signal_form_submitted.disconnect(self.curr_module.form_submitted)
 
-        try:
-            needed_entities = module_info.needed_entities()
-            Parser([]).set_entities_types(needed_entities)
-            entities_list = Parser([]).parse(text)
-            Logger().info("Extracted Entities are {}".format(entities_list))
-        except:
-            entities_list = {}
-
         self.curr_module = getattr(
             module, module_info.class_name()
-        )(module_info, entities_list)
+        )(module_info, entities_dict)
 
         self.curr_module.signal_view_changed.connect(self.main_widget.set_view)
 

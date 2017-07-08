@@ -45,10 +45,13 @@ class ModuleInfo(DBManager().DBModelBase):
                             self.package_name(),
                             'resources',
                             'needed_entities.json')
-        with open(path) as entities_file:
-            entities_sent = json.load(entities_file)
+        if os.path.isfile(path):
+            with open(path) as entities_file:
+                needed_entities = json.load(entities_file)
+        else:
+            needed_entities = []
 
-        return entities_sent
+        return needed_entities
 
     def package_name(self) -> str:
         return re.sub(r'\W', '_', self.name)
