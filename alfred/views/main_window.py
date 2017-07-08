@@ -35,6 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ModuleManager.instance().update_started.connect(
                 item.disable_btns
             )
+
             item.signal_install.connect(ModuleManager.instance().download)
             item.signal_update.connect(ModuleManager.instance().update)
             item.signal_uninstall.connect(ModuleManager.instance().uninstall)

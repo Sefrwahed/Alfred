@@ -114,3 +114,4 @@ class ModuleGroupBox(QGroupBox, Ui_GroupBox):
         if not(int(self.module["id"]) == id):
             self.pushButton_install.setEnabled(False)
             self.pushButton_update.setEnabled(False)
+

@@ -26,7 +26,6 @@ class ModuleManager(QObject):
     update_flag = False
     modules_count = len(ModuleInfo.all())
 
-
     @classmethod
     def instance(cls):
         if cls._instance is None:
@@ -170,3 +169,4 @@ class ModuleManager(QObject):
 
         except Exception as ex:
             Logger().err(ex)
+
