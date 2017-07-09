@@ -30,7 +30,7 @@ class Classifier(metaclass=Singleton):
 
     def train(self):
         if self.train_thread.isRunning():
-            self.train_thread.terminate()
+            self.train_thread.quit()
             
         self.train_thread.start()
 

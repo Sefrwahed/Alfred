@@ -10,6 +10,7 @@ from .a_divider import ADivider
 from .a_form import AForm
 from .a_heading import AHeading
 from .a_icon import AIcon
+from .a_image import AImage
 from .a_input import AInput
 from .a_label import ALabel
 from .a_paragraph import AParagraph
