@@ -111,6 +111,7 @@ class Alfred(QMainWindow):
             self.main_widget.showFullScreen()
 
     def show_widgets_if_visible(self):
+        Logger().info("Showing widgets")
         if self.main_widget.isVisible():
             self.widget_man.prepare_widgets()
 

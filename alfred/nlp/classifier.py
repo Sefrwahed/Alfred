@@ -31,11 +31,8 @@ class Classifier(metaclass=Singleton):
     def train(self):
         if self.train_thread.isRunning():
             self.train_thread.terminate()
-            del self.train_thread
-
-        self.train_thread = TrainingThread()
-        if not self.train_thread.isRunning():
-            self.train_thread.start()
+            
+        self.train_thread.start()
 
     def predict(self, sent):
         module_id = self.train_thread.classifier.predict([sent])[0]
