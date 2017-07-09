@@ -17,7 +17,7 @@ class ACard(ACompositeComponent):
 
         if image_url is not None:
 
-            image = AImage(image_url)
+            image = AImage(image_url, width="400px", height="300px")
             image_div = ADiv(image)
             image_div.attrs["class"] = "card-image"
 
