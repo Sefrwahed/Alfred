@@ -1,3 +1,5 @@
+import spacy
+
 import alfred.nlp.entity_type as entity
 import alfred.nlp.ner_parsers as parsers
 from alfred.utils import Singleton
@@ -55,13 +57,26 @@ class Parser(metaclass=Singleton):
                 t_text = text
                 while True:
                     named_entity = parser.get_name_entities(t_text)
-                    for key in named_entity :
-                        ret_text  = named_entity[key][1]
-                        if ret_text != None :
-                            t_text = t_text.replace(ret_text,"")
-                            if not (key in parsed_entities):
+                    for key in named_entity:
+                        ret_text = named_entity[key][1]
+                        if isinstance(ret_text, list):
+                            # TODO Needs fix! This is just a workaround.
+                            '''
+                            It is likely that this bug occurs because spacy 
+                            parser return list of 2 lists not a 
+                            list of 2 strings as expected
+                            '''
+                            named_entity = {k: [l[0] for l in v]
+                                            for k, v in named_entity.items()}
+                            ret_text = named_entity[key][1]
+                        if ret_text is not None:
+                            if isinstance(ret_text, spacy.tokens.span.Span):
+                                # TODO Needs fix! This is just a workaround.
+                                ret_text = str(ret_text)
+                            t_text = t_text.replace(ret_text, "")
+                            if key not in parsed_entities:
                                 parsed_entities[key] = []
                             parsed_entities[key].append(named_entity[key])
-                    if t_text == "" or ret_text == None:
+                    if t_text == "" or ret_text is None:
                         break
         self.parsed_entities = parsed_entities
