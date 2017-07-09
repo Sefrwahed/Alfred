@@ -141,13 +141,14 @@ class Alfred(QMainWindow):
             Parser([]).set_entities_types(needed_entities)
             entities_dict = Parser([]).parse(text)
         except:
-            Logger().err('Could not extract named entities')
+            pass
+            # Logger().err('Could not extract named entities')
         Logger().info("Extracted Entities are {}".format(entities_dict))
 
         self.set_module(module_info, entities_dict)
         self.main_widget.set_status_icon_busy(False)
 
-    @pyqtSlot()
+    @pyqtSlot() 
     def add_new_sentence(self):
         self.main_widget.hide()
         modules = dict(map(lambda m: (m.name, m), ModuleInfo.all()))

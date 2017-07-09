@@ -27,7 +27,7 @@ class Spacy(NER):
         parsed_entities = {}
         for entities_type in self.entities_types_list:
             if entities_type in entities:
-                parsed_entities[entities_type] = [entities[entities_type], entities[entities_type]]
+                parsed_entities[entities_type] = [str(entities[entities_type][0]), str(entities[entities_type][0])]
             else:
                 parsed_entities[entities_type] = [None, None]
         return parsed_entities
