@@ -1,5 +1,6 @@
 # Python builtins imports
 import sys, json, os
+from imp import reload
 
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
 from PyQt5.QtGui import QIcon, QPixmap
@@ -186,6 +187,9 @@ class Alfred(QMainWindow):
         package_name = module_info.package_name()
         module = __import__('{}.{}'.format(package_name, package_name),
                             fromlist=package_name)
+
+        if module.__name__ in sys.modules:
+            reload(module)
 
         if self.curr_module is not None:
             self.web_bridge.signal_event_triggered.disconnect(self.curr_module.event_triggered)
