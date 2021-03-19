@@ -14,7 +14,7 @@ ftfy==4.4.3
 html5lib==0.999999999
 idna==2.5
 jieba3k==0.35.1
-Jinja2==2.9.6
+Jinja2==2.11.3
 JPype1==0.6.1
 Logbook==1.0.0
 lxml==3.6.4
