@@ -22,7 +22,7 @@ Mako==1.0.6
 MarkupSafe==1.0
 murmurhash==0.26.4
 newspaper3k==0.1.7
-nltk==3.2.1
+nltk==3.6.3
 normality==0.4.4
 numpy==1.13.0
 pathlib==1.0.1
