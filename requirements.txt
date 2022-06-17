@@ -24,7 +24,7 @@ murmurhash==0.26.4
 newspaper3k==0.1.7
 nltk==3.2.1
 normality==0.4.4
-numpy==1.13.0
+numpy==1.21.0
 pathlib==1.0.1
 Pillow==3.4.2
 plac==0.9.6
