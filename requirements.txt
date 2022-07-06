@@ -17,7 +17,7 @@ jieba3k==0.35.1
 Jinja2==2.9.6
 JPype1==0.6.1
 Logbook==1.0.0
-lxml==3.6.4
+lxml==4.9.1
 Mako==1.0.6
 MarkupSafe==1.0
 murmurhash==0.26.4
